@@ -1217,20 +1217,22 @@ void loop() {
 
     queue.advance();
 
-    // const millis_t ms = millis();
-    // if (ELAPSED(ms, last_event_ms + 250)) {
-    //   last_event_ms = ms;
-    //   if(next_state==1){
-    //     extDigitalWrite(9, next_state);
-    //     analogWrite(9, 255);
-    //     next_state=0;
-    //   }
-    //   else{
-    //     extDigitalWrite(9, next_state);
-    //     analogWrite(9, 255);
-    //     next_state=0;
-    //   }
-    // }
+    
+    const millis_t ms = millis();
+    if (ELAPSED(ms, last_event_ms + 250)) {
+      last_event_ms = ms;
+      if(next_state==1){
+        extDigitalWrite(9, next_state);
+        analogWrite(9, 255);
+        next_state=0;
+      }
+      else{
+        extDigitalWrite(9, next_state);
+        analogWrite(9, 0);
+        next_state=1;
+      }
+    }
+    
     // extDigitalWrite(9, HIGH);
     // analogWrite(9, 255);
     // delay(250);
