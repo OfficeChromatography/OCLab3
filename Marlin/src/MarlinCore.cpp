@@ -57,6 +57,10 @@
 #include "gcode/parser.h"
 #include "gcode/queue.h"
 
+#include <Wire.h>
+#include "MPRSensor/Adafruit_MPRLS.h"
+
+
 #if ENABLED(TOUCH_BUTTONS)
   #include "feature/touch/xpt2046.h"
 #endif
@@ -180,6 +184,12 @@
 #if HAS_L64XX
   #include "libs/L64XX/L64XX_Marlin.h"
 #endif
+
+// Initializing pressure sensor
+
+#define RESET_PIN  -1  // set to any GPIO pin # to hard-reset on begin()
+#define EOC_PIN    -1  // set to any GPIO pin to read end-of-conversion by pin
+Adafruit_MPRLS mpr = Adafruit_MPRLS(RESET_PIN, EOC_PIN);
 
 const char NUL_STR[] PROGMEM = "",
            M112_KILL_STR[] PROGMEM = "M112 Shutdown",
@@ -1184,7 +1194,16 @@ void setup() {
   #endif
 
   marlin_state = MF_RUNNING;
+  if(mpr.begin()==1){
+    SERIAL_ECHOLN("Pressure sensor responded");	
+  }
+  
+  // if (! mpr.begin()) {
+  //   SERIAL_ECHOLNPGM("Failed to communicate with MPRLS sensor, check wiring?");
+  // }
+  // SERIAL_ECHOLNPGM("Found MPRLS sensor");
 
+  // Finished SETUP
   SETUP_LOG("setup() completed.");
   
 }
@@ -1203,10 +1222,13 @@ void setup() {
  *    as long as idle() or manage_inactivity() are being called.
  */
 
-millis_t last_event_ms = millis();  //initial start time
+millis_t last_pump_state_change_ms = millis();  //Needed initialization
+millis_t last_preassure_check_ms = millis();    //Needed initialization
 bool next_state = 0;
+
 void loop() {
   do {
+    float pressure;
     idle();
     
     #if ENABLED(SDSUPPORT)
@@ -1216,36 +1238,46 @@ void loop() {
     #endif
 
     queue.advance();
-
+    // check the pressure every 4000ms
+    pressure = get_pressure(4000);
     
-    const millis_t ms = millis();
-    if (ELAPSED(ms, last_event_ms + 250)) {
-      last_event_ms = ms;
-      if(next_state==1){
+    // If the pressure is not enough then starts pumping
+    pumpit(pressure);
+  
+    endstops.event_handler();
+  } while (ENABLED(__AVR__)); // Loop forever on slower (AVR) boards
+}
+
+void pumpit(float pressure){
+  const millis_t ms = millis();
+  //check if 250ms has already pass since the last change of state (on/off or off/on). This is so that we can guarantee that the pump will always be ON or OFF for 250ms
+  if (ELAPSED(ms, last_pump_state_change_ms + 250)) {
+      // Update the last_pump_state_change_ms to this moment
+      last_pump_state_change_ms = ms;
+      // Check if the preassure is < 5 if so and if the next_state of the pump should be ON
+      if(next_state==1 && pressure<5){
+        //Set the PUMP ON
         extDigitalWrite(9, next_state);
         analogWrite(9, 255);
+        //Next state of the pump shuld be OFF
         next_state=0;
       }
       else{
+        //Set the Pump OFF
         extDigitalWrite(9, next_state);
         analogWrite(9, 0);
+        //Next state of the pump shuld be OFF
         next_state=1;
       }
     }
-    
-    // extDigitalWrite(9, HIGH);
-    // analogWrite(9, 255);
-    // delay(250);
-    // extDigitalWrite(9, LOW);
-    // analogWrite(9, 0);
-    // delay(250);
+}
 
-    // digitalWrite(9, HIGH);   // turn the LED on (HIGH is the voltage level)
-    // delay(250);               // wait for a second
-    // digitalWrite(9, LOW);    // turn the LED off by making the voltage LOW
-    // delay(250);     
-
-
-    endstops.event_handler();
-  } while (ENABLED(__AVR__)); // Loop forever on slower (AVR) boards
+float get_pressure(uint16_t period){
+  static float pressure;
+  const millis_t ms = millis();
+    if (ELAPSED(ms, last_preassure_check_ms + period)){
+      last_preassure_check_ms = ms;
+      pressure = mpr.readPressure();
+    }
+  return pressure;
 }

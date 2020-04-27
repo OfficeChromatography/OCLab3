@@ -59,7 +59,6 @@ void valve_it(uint16_t f){
   while(millis()<(valve_on+1/f)){};
   WRITE(10,LOW);
   valve_off = millis();
-
 }
 
 void GcodeSuite::G94(){
@@ -79,27 +78,6 @@ void GcodeSuite::G94(){
 
 void GcodeSuite::G93(){
 
-// You dont *need* a reset and EOC pin for most uses, so we set to -1 and don't connect
-#define RESET_PIN  -1  // set to any GPIO pin # to hard-reset on begin()
-#define EOC_PIN    -1  // set to any GPIO pin to read end-of-conversion by pin
-
-Adafruit_MPRLS mpr = Adafruit_MPRLS(RESET_PIN, EOC_PIN);
-mpr.begin();
-
-if(parser.seen('P')){
-  // pressure value in mmHg
-  int16_t p = parser.intval('P');
-  SERIAL_ECHOLNPAIR("Pressure:",p);
-  // SERIAL_ECHOLNPAIR("",mpr.readPressure());
-  // Reads the sensor and open the pump if the preassure is too low
-  while(p<mpr.readPressure()){
-    SERIAL_ECHOLNPAIR("ENTRO AL WHILE");
-    pump_it();
-  }
-}
-  else{
-    SERIAL_ECHOLNPGM("Please Insert the pressure wanted");
-  }
   // frequency value in Hz 
   if(parser.seen('F') && parser.seen('Q')){
     int16_t f = parser.intval('F');
