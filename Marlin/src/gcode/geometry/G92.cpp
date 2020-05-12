@@ -53,11 +53,15 @@ void valve_it(uint16_t f){
   static millis_t valve_on = millis();
   static millis_t valve_off = millis();
 
-  while(millis()<(valve_off+1/f)){};
+  while(millis()<(valve_off+2000/f)){};
+  SERIAL_ECHOLNPGM("on");
   WRITE(16,HIGH);
+  analogWrite(16, 255);
   valve_on = millis();
-  while(millis()<(valve_on+1/f)){};
-  WRITE(10,LOW);
+  while(millis()<(valve_on+2000/f)){};
+  WRITE(16,LOW);
+  analogWrite(16, 0);
+  SERIAL_ECHOLNPGM("off");
   valve_off = millis();
 }
 
@@ -79,22 +83,32 @@ void GcodeSuite::G94(){
 void GcodeSuite::G93(){
 
   // frequency value in Hz 
-  if(parser.seen('F') && parser.seen('Q')){
+  if(parser.seen('F')){
     int16_t f = parser.intval('F');
-    int16_t q = parser.intval('Q');
 
     SERIAL_ECHOLNPAIR("Frequency:",f);
-    SERIAL_ECHOLNPAIR("Quantity:",q);
-    
-    for(int16_t i=0;i<q;i++){
-      valve_it(f);
-    }
+    valve_it(f);
   }
   else
   {
-    SERIAL_ECHOLNPGM("Please Insert the frequency wanted and quantity");
+    SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
   }
 }
+
+// void GcodeSuite::G94(){
+
+//   // frequency value in Hz 
+//   if(parser.seen('P')){
+//     int16_t f = parser.intval('');
+
+//     SERIAL_ECHOLNPAIR("Frequency:",f);
+//     valve_it(f);
+//   }
+//   else
+//   {
+//     SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
+//   }
+// }
 
 void GcodeSuite::G92() {
 

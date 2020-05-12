@@ -1197,6 +1197,9 @@ void setup() {
   if(mpr.begin()==1){
     SERIAL_ECHOLN("Pressure sensor responded");	
   }
+  else{
+    SERIAL_ECHOLN("Couldnt found the Sensor");
+  }
   
   // if (! mpr.begin()) {
   //   SERIAL_ECHOLNPGM("Failed to communicate with MPRLS sensor, check wiring?");
@@ -1239,7 +1242,7 @@ void loop() {
 
     queue.advance();
     // check the pressure every 4000ms
-    pressure = get_pressure(4000);
+    pressure = get_pressure(500);
     
     // If the pressure is not enough then starts pumping
     pumpit(pressure);
@@ -1278,6 +1281,7 @@ float get_pressure(uint16_t period){
     if (ELAPSED(ms, last_preassure_check_ms + period)){
       last_preassure_check_ms = ms;
       pressure = mpr.readPressure();
+      // SERIAL_ECHOLNPAIR("Pressure:",pressure);
     }
   return pressure;
 }
