@@ -1198,7 +1198,7 @@ void setup() {
     SERIAL_ECHOLN("Pressure sensor responded");	
   }
   else{
-    SERIAL_ECHOLN("Couldnt found the Sensor");
+    SERIAL_ECHOLN("Couldnt find the Sensor");
   }
   
   // if (! mpr.begin()) {
@@ -1225,13 +1225,13 @@ void setup() {
  *    as long as idle() or manage_inactivity() are being called.
  */
 
-millis_t last_pump_state_change_ms = millis();  //Needed initialization
-millis_t last_preassure_check_ms = millis();    //Needed initialization
-bool next_state = 0;
+// millis_t last_pump_state_change_ms = millis();  //Needed initialization
+// millis_t last_preassure_check_ms = millis();    //Needed initialization
+// bool next_state = 0;
 
 void loop() {
   do {
-    float pressure;
+    // float pressure;
     idle();
     
     #if ENABLED(SDSUPPORT)
@@ -1242,46 +1242,46 @@ void loop() {
 
     queue.advance();
     // check the pressure every 4000ms
-    pressure = get_pressure(500);
+    // pressure = get_pressure(500);
     
     // If the pressure is not enough then starts pumping
-    pumpit(pressure);
+    // pumpit(pressure);
   
     endstops.event_handler();
   } while (ENABLED(__AVR__)); // Loop forever on slower (AVR) boards
 }
 
-void pumpit(float pressure){
-  const millis_t ms = millis();
-  //check if 250ms has already pass since the last change of state (on/off or off/on). This is so that we can guarantee that the pump will always be ON or OFF for 250ms
-  if (ELAPSED(ms, last_pump_state_change_ms + 250)) {
-      // Update the last_pump_state_change_ms to this moment
-      last_pump_state_change_ms = ms;
-      // Check if the preassure is < 5 if so and if the next_state of the pump should be ON
-      if(next_state==1 && pressure<5){
-        //Set the PUMP ON
-        extDigitalWrite(9, next_state);
-        analogWrite(9, 255);
-        //Next state of the pump shuld be OFF
-        next_state=0;
-      }
-      else{
-        //Set the Pump OFF
-        extDigitalWrite(9, next_state);
-        analogWrite(9, 0);
-        //Next state of the pump shuld be OFF
-        next_state=1;
-      }
-    }
-}
+// void pumpit(float pressure){
+//   const millis_t ms = millis();
+//   //check if 250ms has already pass since the last change of state (on/off or off/on). This is so that we can guarantee that the pump will always be ON or OFF for 250ms
+//   if (ELAPSED(ms, last_pump_state_change_ms + 250)) {
+//       // Update the last_pump_state_change_ms to this moment
+//       last_pump_state_change_ms = ms;
+//       // Check if the preassure is < 5 if so and if the next_state of the pump should be ON
+//       if(next_state==1 && pressure<5){
+//         //Set the PUMP ON
+//         extDigitalWrite(9, next_state);
+//         analogWrite(9, 255);
+//         //Next state of the pump shuld be OFF
+//         next_state=0;
+//       }
+//       else{
+//         //Set the Pump OFF
+//         extDigitalWrite(9, next_state);
+//         analogWrite(9, 0);
+//         //Next state of the pump shuld be OFF
+//         next_state=1;
+//       }
+//     }
+// }
 
-float get_pressure(uint16_t period){
-  static float pressure;
-  const millis_t ms = millis();
-    if (ELAPSED(ms, last_preassure_check_ms + period)){
-      last_preassure_check_ms = ms;
-      pressure = mpr.readPressure();
-      // SERIAL_ECHOLNPAIR("Pressure:",pressure);
-    }
-  return pressure;
-}
+// float get_pressure(uint16_t period){
+//   static float pressure;
+//   const millis_t ms = millis();
+//     if (ELAPSED(ms, last_preassure_check_ms + period)){
+//       last_preassure_check_ms = ms;
+//       pressure = mpr.readPressure();
+//       // SERIAL_ECHOLNPAIR("Pressure:",pressure);
+//     }
+//   return pressure;
+// }

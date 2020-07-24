@@ -56,7 +56,7 @@ void GcodeSuite::M0_M1() {
 
   planner.synchronize();
 
-  const bool seenQ = parser.seen('Q');
+  const bool seen = parser.seen('Q');
   #if HAS_LEDS_OFF_FLAG
     if (seenQ) printerEventLEDs.onPrintCompleted();      // Change LED color for Print Completed
   #endif
