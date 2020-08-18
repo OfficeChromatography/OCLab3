@@ -96,15 +96,8 @@ void staticClean(){
   // PUMPS IN
   extDigitalWrite(9, 1);
   analogWrite(9, 255);
-  // OPENS THE VALVE
-  WRITE(16,HIGH);
-  analogWrite(16, 255);
   // WAIT
   delay(250);
-  // PUMPS OUT
-  WRITE(16,LOW);
-  analogWrite(16, 0);
-  // CLOSE THE VALVE
   extDigitalWrite(9, 0);
   analogWrite(9, 0);
   delay(250);
@@ -188,18 +181,8 @@ void GcodeSuite::G95(){
 }
 
 void GcodeSuite::G96(){
-  float pressure =  mpr.readPressure();
-  if(pressure<3){
-    staticClean();
-  }
-  else{
-    valve_it(1);
-  }
+  staticClean();
 }
-
-
-
-
 
 void GcodeSuite::G92() {
 
