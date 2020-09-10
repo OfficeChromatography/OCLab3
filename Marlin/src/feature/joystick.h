@@ -50,6 +50,7 @@ class Joystick {
     #endif
     static void calculate(xyz_float_t &norm_jog);
     static void inject_jog_moves();
+    static float show_raw();
 };
 
 extern Joystick joystick;

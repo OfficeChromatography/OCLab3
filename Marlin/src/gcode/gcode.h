@@ -285,9 +285,10 @@
 
 #include "../inc/MarlinConfig.h"
 #include "parser.h"
+#include "../module/temperature.h"
 
 #if ENABLED(I2C_POSITION_ENCODERS)
-  #include "../feature/encoder_i2c.h"
+  #include "./feature/encoder_i2c.h"
 #endif
 
 enum AxisRelative : uint8_t { REL_X, REL_Y, REL_Z, REL_E, E_MODE_ABS, E_MODE_REL };
@@ -499,6 +500,12 @@ private:
   static void G94();
   static void G95();
   static void G96();
+  static void G97();
+  static void G98();
+  static void G40();
+  static void G41();
+  static void pumpsyringe(float pressure_set);
+
 
 
   #if ENABLED(CALIBRATION_GCODE)

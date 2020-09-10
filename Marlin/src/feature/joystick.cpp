@@ -33,6 +33,7 @@
 #include "../inc/MarlinConfig.h"  // for pins
 #include "../module/planner.h"
 #include "../module/temperature.h"
+#include <math.h>
 
 Joystick joystick;
 
@@ -83,6 +84,24 @@ Joystick joystick;
     SERIAL_EOL();
   }
 #endif
+
+static float Joystick::show_raw(){
+  // if(x.raw <10250){
+  //   return 0;
+  // }
+  // else{
+    // return 7.55784492e-03 * x.raw - 6.04980886e+01;
+  // float p = x.raw;
+  // return 2.00639745e-15*pow(p,5) - 1.15620343e-10*pow(p,4) + 2.66510246e-06*pow(p,3) - 3.07075376e-02*pow(p,2) + 1.76824209e+02*p - 4.07021413e+05;
+  // return 4.38857589e-03*x.raw - 2.97681744e+01;
+  // return 2.47009819e-02*x.raw - 2.78255860e+02;
+  // return 1.69288934e-02*x.raw -1.91998681e+02;
+  int16_t p = x.raw;
+  // return 0.04929592590378106*p-595.9564215244906;
+  return 0.037138965180623845*p-443.1090776401401;
+      // }
+  // float a = 1.23350860e-02 * x.raw -1.25021319e+02;
+}
 
 #if HAS_JOY_ADC_X || HAS_JOY_ADC_Y || HAS_JOY_ADC_Z
 

@@ -21,11 +21,14 @@
  */
 
 #include "../gcode.h"
+#include "../../module/motion.h"
 #include "../../MPRSensor/Adafruit_MPRLS.h"
 #include "../../module/motion.h"
 #include "../../module/stepper.h"
+#include "../../feature/joystick.h"
 
 extern Adafruit_MPRLS mpr ;
+
 
 #if ENABLED(I2C_POSITION_ENCODERS)
   #include "../../feature/encoder_i2c.h"
@@ -177,12 +180,84 @@ void GcodeSuite::G94(){
 }
 
 void GcodeSuite::G95(){
-  SERIAL_ECHOLNPAIR("P:",mpr.readPressure());
+  SERIAL_ECHOPAIR("P_pre:",mpr.readPressure());
+  SERIAL_ECHOLNPAIR("\tP_for:",joystick.show_raw());
 }
 
 void GcodeSuite::G96(){
   staticClean();
 }
+
+
+// Initial 
+void GcodeSuite::G97(){
+  float pressure_set;
+
+  if (parser.seen('P')){
+     pressure_set = parser.intval('P'); 
+     pumpsyringe(pressure_set);
+  }
+  else
+  {
+    SERIAL_ECHOLNPGM("Please Insert the pressure wanted");
+  }
+  
+}
+
+void GcodeSuite::G98(){
+  // frequency value in Hz 
+  if(parser.seen('F')){
+    int16_t f = parser.intval('F');
+    
+    // Open the valve
+    valve_it(f);
+  }
+  else
+  {
+    SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
+  }
+}
+
+
+
+
+void GcodeSuite::G40(){
+  //  
+  // // SERIAL_ECHOLNPAIR("Frequency:"); 
+SERIAL_ECHOLNPAIR("PSET:",joystick.show_raw());
+  
+}
+
+void GcodeSuite::G41(){
+  extDigitalWrite(16, 0);
+  analogWrite(16, 0);
+}
+
+void GcodeSuite::pumpsyringe(float pressure_set){
+  float pos=current_position.z;
+  // float pressure_read = mpr.readPressure();
+  float pressure_read = joystick.show_raw();
+  // set_relative_mode(true);
+  // planner.synchronize();
+  SERIAL_ECHOLNPAIR("PSET:",pressure_set);
+  float min_presure = pressure_set-1;
+  float max_presure = pressure_set+1;
+
+  while(pressure_read<min_presure || pressure_read>=max_presure){
+    if(pressure_read<min_presure){
+      pos+=0.001;
+    }
+    else{
+      pos-=2;
+    }
+    do_blocking_move_to_z(pos, 10);
+      // pressure_read = mpr.readPressure();
+      pressure_read = joystick.show_raw();
+      SERIAL_ECHOPAIR("P_pre:",mpr.readPressure());
+      SERIAL_ECHOLNPAIR("\tP_for:",joystick.show_raw());
+  }
+}
+
 
 void GcodeSuite::G92() {
 

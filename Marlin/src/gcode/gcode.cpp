@@ -348,7 +348,11 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 94: G94(); break;                                      // G94: Pumpit with pressure control 
       case 95: G95(); break;           
       case 96: G96(); break;  
-                       
+      case 97: G97(); break; 
+      case 98: G98(); break; 
+      case 40: G40(); break; 
+      case 41: G41(); break; 
+
       #if HAS_MESH
         case 42: G42(); break;                                    // G42: Coordinated move to a mesh point
       #endif
@@ -880,8 +884,9 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       #endif
       parser.unknown_command_warning();
   }
-
+  
   if (!no_ok) queue.ok_to_send();
+  
 }
 
 /**

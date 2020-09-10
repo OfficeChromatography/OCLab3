@@ -764,7 +764,7 @@ void idle(
   #endif
 
   #if ENABLED(POLL_JOG)
-    joystick.inject_jog_moves();
+    // joystick.inject_jog_moves();
   #endif
 }
 
