@@ -22,57 +22,49 @@
 
 #include "../gcode.h"
 #include "../../module/motion.h"
-#include "../../MPRSensor/Adafruit_MPRLS.h"
+#include "../../ForceSensor/ForceSensor.h"
+#include "../../NeoPixel/Adafruit_NeoPixel.h"
 #include "../../module/motion.h"
 #include "../../module/stepper.h"
 #include "../../feature/joystick.h"
+#include "../../module/endstops.h"
 
-extern Adafruit_MPRLS mpr ;
+#ifdef __AVR__
+ #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+
+#define LED_PIN    6
+#define LED_COUNT 16
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRBW + NEO_KHZ800);
+extern ForceSensor force ;
 
 
 #if ENABLED(I2C_POSITION_ENCODERS)
   #include "../../feature/encoder_i2c.h"
 #endif
 
-// #define RESET_PIN  -1  // set to any GPIO pin # to hard-reset on begin()
-// #define EOC_PIN    -1  // set to any GPIO pin to read end-of-conversion by pin
+#if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+  clock_prescale_set(clock_div_1);
+#endif
 
 
-// Adafruit_MPRLS mpr = Adafruit_MPRLS(RESET_PIN, EOC_PIN);
-millis_t last_pump_state_change_ms = millis();  //Needed initialization
-millis_t last_preassure_check_ms = millis();   //Needed initialization
-bool next_state = 0;
 /**
  * G92: Set current position to given X Y Z E
  */
 
 // one complete cicle of pump on and off
 void pump_it(){
-  float pressure;
-  // Read Preassure
-  pressure=mpr.readPressure();
-  SERIAL_ECHOLNPAIR("BP ",pressure);
-
   extDigitalWrite(9, 1);
   analogWrite(9, 255);
   delay(250);
   extDigitalWrite(9, 0);
   analogWrite(9, 0);
   delay(250);
-
-  // Read Preassure
-  pressure=mpr.readPressure();
-  SERIAL_ECHOLNPAIR("AP ",pressure);
 }
 
 // one complete cicle of vavle open and close at a certain frequency
 void valve_it(uint16_t f){
-  float pressure;
-  // Read Preassure
-  pressure = mpr.readPressure();
-  SERIAL_ECHOLNPAIR("BV ",pressure);
-
-  // valve
+  // valve open
   extDigitalWrite(16, 1);
   analogWrite(16, 255);
   if(f<500){
@@ -81,6 +73,7 @@ void valve_it(uint16_t f){
   else{
     delayMicroseconds(500000/f);
   }
+  // valve close
   extDigitalWrite(16, 0);
   analogWrite(16, 0);
   if(f<500){
@@ -89,10 +82,6 @@ void valve_it(uint16_t f){
   else{
     delayMicroseconds(500000/f);
   }
-
-  // Read Preassure
-  pressure=mpr.readPressure();
-  SERIAL_ECHOLNPAIR("AV ",pressure);
 }
 
 void staticClean(){
@@ -106,82 +95,39 @@ void staticClean(){
   delay(250);
 }
 
-// void pumpit(){
-//   const millis_t ms = millis();
-//   //check if 250ms has already pass since the last change of state (on/off or off/on). This is so that we can guarantee that the pump will always be ON or OFF for 250ms
-//   if (ELAPSED(ms, last_pump_state_change_ms + 250)) {
-//       // Check if the preassure is < 5 if so and if the next_state of the pump should be ON
-//       extDigitalWrite(9, 1);
-//       analogWrite(9, 255);
-//       delay(250);
-//       extDigitalWrite(9, 0);
-//       analogWrite(9, 0);
-//       delay(250);
-//       // Update the last_pump_state_change_ms to this moment
-//       last_pump_state_change_ms = ms;
-//     }
-// }
 
+void colorWipe(uint32_t color, int wait) {
+  for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
+    strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
+    strip.show();                          //  Update strip to match
+  }
+}
 
-// float get_pressure(uint16_t period){
-//   static float pressure;
-//   const millis_t ms = millis();
-//     if (ELAPSED(ms, last_preassure_check_ms + period)){
-//       last_preassure_check_ms = ms;
-//       pressure = mpr.readPressure();
-//       // SERIAL_ECHOLNPAIR("Pressure:",pressure);
-//     }
-//   return pressure;
-// }
 
 void GcodeSuite::G93(){
-  // frequency value in Hz 
-  if(parser.seen('F')){
-    int16_t f = parser.intval('F');
-    SERIAL_ECHOLNPAIR("Frequency:",f);
-    valve_it(f);
-    // Pressure Checks
-    float pressure=mpr.readPressure();
-    float set_pressure = parser.floatval('P');
-    float min_pressure = set_pressure;
-    if(pressure<min_pressure){
-      pump_it();
-      pressure=mpr.readPressure();
-    }
+  if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')&&parser.seen('I')){
+    int red = parser.intval('R'); 
+    int green = parser.intval('G'); 
+    int blue = parser.intval('B'); 
+    int brigthness = parser.intval('I'); 
+
+    strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+    strip.show();            // Turn OFF all pixels ASAP
+    strip.setBrightness(brigthness); // Set BRIGHTNESS to about 1/5 (max = 255)
+    colorWipe(strip.Color(red, green, blue),50);
   }
   else
   {
-    SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
+    colorWipe(strip.Color(0, 0, 0),50);
   }
 }
 
 
-void GcodeSuite::G94(){
-  // Number of pumxps
-  int n_pumps = 0; 
-  int number_of_pumps=7;
-  if (parser.seen('N')){
-     number_of_pumps = parser.intval('N'); 
-  }
-  if(parser.seen('P')){
-    float preassure_set = parser.floatval('P');
-    float pressure =  mpr.readPressure();
-    // planner.synchronize();
-    while(pressure<preassure_set && n_pumps<number_of_pumps){
-        pump_it();
-        pressure=mpr.readPressure();
-        n_pumps++;
-    }
-  }
-  else
-  {
-    SERIAL_ECHOLNPGM("Please Insert the pressure wanted");
-  }
-}
+
+void GcodeSuite::G94(){}
 
 void GcodeSuite::G95(){
-  SERIAL_ECHOPAIR("P_pre:",mpr.readPressure());
-  SERIAL_ECHOLNPAIR("\tP_for:",joystick.show_raw());
+  SERIAL_ECHOLNPAIR("Pressure:",force.readPressure());
 }
 
 void GcodeSuite::G96(){
@@ -192,7 +138,7 @@ void GcodeSuite::G96(){
 // Initial 
 void GcodeSuite::G97(){
   float pressure_set;
-
+  
   if (parser.seen('P')){
      pressure_set = parser.intval('P'); 
      pumpsyringe(pressure_set);
@@ -222,10 +168,8 @@ void GcodeSuite::G98(){
 
 
 void GcodeSuite::G40(){
-  //  
-  // // SERIAL_ECHOLNPAIR("Frequency:"); 
-SERIAL_ECHOLNPAIR("PSET:",joystick.show_raw());
-  
+  extDigitalWrite(16, 0);
+  analogWrite(16, 0);
 }
 
 void GcodeSuite::G41(){
@@ -235,28 +179,44 @@ void GcodeSuite::G41(){
 
 void GcodeSuite::pumpsyringe(float pressure_set){
   float pos=current_position.z;
-  // float pressure_read = mpr.readPressure();
-  float pressure_read = joystick.show_raw();
+  float pressure_read = force.readPressure();
   // set_relative_mode(true);
   // planner.synchronize();
   SERIAL_ECHOLNPAIR("PSET:",pressure_set);
-  float min_presure = pressure_set-1;
-  float max_presure = pressure_set+1;
+  float min_pressure = pressure_set-0.5;
+  float max_pressure = pressure_set+0.5;
 
-  while(pressure_read<min_presure || pressure_read>=max_presure){
-    if(pressure_read<min_presure){
-      pos+=0.001;
-    }
-    else{
-      pos-=2;
-    }
+  while(pressure_read<min_pressure || pressure_read>=max_pressure){
+    double difference = min_pressure-pressure_read;
+    endstops.enable(true);
+    pos+=0.01* (double) difference;
     do_blocking_move_to_z(pos, 10);
-      // pressure_read = mpr.readPressure();
-      pressure_read = joystick.show_raw();
-      SERIAL_ECHOPAIR("P_pre:",mpr.readPressure());
-      SERIAL_ECHOLNPAIR("\tP_for:",joystick.show_raw());
+      pressure_read = force.readPressure();
+        SERIAL_ECHOLNPAIR("force_N:",force.readPressure());
   }
 }
+
+// void GcodeSuite::pumpsyringe(float pressure_set){
+//   float pos=current_position.z;
+//   float pressure_read = force.readPressure();
+//   // set_relative_mode(true);
+//   // planner.synchronize();
+//   SERIAL_ECHOLNPAIR("PSET:",pressure_set);
+//   float min_presure = pressure_set-0.1;
+//   float max_presure = pressure_set+0.1;
+
+//   while(pressure_read<min_presure || pressure_read>=max_presure){
+//     if(pressure_read<min_presure){
+//       pos+=0.01;
+//     }
+//     else{
+//       pos-=0.01;
+//     }
+//     do_blocking_move_to_z(pos, 10);
+//     pressure_read = force.readPressure();
+//     SERIAL_ECHOLNPAIR("\tP_for:",pressure_read);
+//   }
+// }
 
 
 void GcodeSuite::G92() {
