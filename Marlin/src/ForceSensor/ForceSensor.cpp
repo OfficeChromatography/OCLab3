@@ -131,7 +131,6 @@ double ForceSensor::overSampleAndMean(int number_of_samples){
     for(int i=0;i<number_of_samples;i++){
         mean += sample();
     }
-
     mean = mean/number_of_samples;
     return mean;
 }
