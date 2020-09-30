@@ -7,6 +7,7 @@
 #include "../../module/motion.h"
 #include "../../feature/joystick.h"
 #include "../../module/endstops.h"
+#include "../../OpenValve/openValve.h"
 
 
 #ifdef __AVR__
@@ -22,6 +23,7 @@
 #define LED_COUNT 16
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN_PIXEL, NEO_GRBW + NEO_KHZ800);
 extern ForceSensor force ;
+extern ValveOpen valve ;
 
 // one complete cicle of pump on and off
 void pump_it(){
@@ -156,8 +158,7 @@ void GcodeSuite::G98(){
 }
 
 void GcodeSuite::G40(){
-  extDigitalWrite(16, 0);
-  analogWrite(16, 0);
+  valve.toggleValve();
 }
 
 void GcodeSuite::G41(){

@@ -60,6 +60,8 @@
 #include <Wire.h>
 #include "ForceSensor/ForceSensor.h"
 
+#include "../src/OpenValve/openValve.h"
+
 
 #if ENABLED(TOUCH_BUTTONS)
   #include "feature/touch/xpt2046.h"
@@ -208,6 +210,8 @@ const char NUL_STR[] PROGMEM = "",
            SP_Y_LBL[] PROGMEM = " Y:",
            SP_Z_LBL[] PROGMEM = " Z:",
            SP_E_LBL[] PROGMEM = " E:";
+
+ValveOpen valve = ValveOpen();
 
 MarlinState marlin_state = MF_INITIALIZING;
 
@@ -681,6 +685,7 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
  * Standard idle routine keeps the machine alive
  */
 void idle(
+ 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
     bool no_stepper_sleep/*=false*/
   #endif
@@ -1222,6 +1227,13 @@ void loop() {
     // float pressure;
     idle();
     
+    if(valve.getOpen()){
+      millis_t ms = millis();
+      if(ELAPSED(ms, ms + 3000)) {
+        valve.toggleValve();
+      }
+    }
+
     #if ENABLED(SDSUPPORT)
       card.checkautostart();
       if (card.flag.abort_sd_printing) abortSDPrinting();
