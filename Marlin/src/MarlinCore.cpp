@@ -1227,12 +1227,7 @@ void loop() {
     // float pressure;
     idle();
     
-    if(valve.getOpen()){
-      millis_t ms = millis();
-      if(ELAPSED(ms, ms + 3000)) {
-        valve.toggleValve();
-      }
-    }
+    valve.securityCheck();
 
     #if ENABLED(SDSUPPORT)
       card.checkautostart();

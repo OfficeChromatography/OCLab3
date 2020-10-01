@@ -25,69 +25,6 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN_PIXEL, NEO_GRBW + NEO_KHZ800);
 extern ForceSensor force ;
 extern ValveOpen valve ;
 
-// one complete cicle of pump on and off
-void pump_it(){
-  extDigitalWrite(9, 1);
-  analogWrite(9, 255);
-  delay(250);
-  extDigitalWrite(9, 0);
-  analogWrite(9, 0);
-  delay(250);
-}
-
-// one complete cicle of vavle open and close at a certain frequency
-void valve_it(uint16_t f){
-  // valve open
-  extDigitalWrite(16, 1);
-  analogWrite(16, 255);
-  if(f<500){
-    delay(500/f);
-// void GcodeSuite::pumpsyringe(float pressure_set){
-//   float pos=current_position.z;
-//   float pressure_read = force.readPressure();
-//   // set_relative_mode(true);
-//   // planner.synchronize();
-//   SERIAL_ECHOLNPAIR("PSET:",pressure_set);
-//   float min_presure = pressure_set-0.1;
-//   float max_presure = pressure_set+0.1;
-
-//   while(pressure_read<min_presure || pressure_read>=max_presure){
-//     if(pressure_read<min_presure){
-//       pos+=0.01;
-//     }
-//     else{
-//       pos-=0.01;
-//     }
-//     do_blocking_move_to_z(pos, 10);
-//     pressure_read = force.readPressure();
-//     SERIAL_ECHOLNPAIR("\tP_for:",pressure_read);
-//   }
-// }
-  }
-  else{
-    delayMicroseconds(500000/f);
-  }
-  // valve close
-  extDigitalWrite(16, 0);
-  analogWrite(16, 0);
-  if(f<500){
-    delay(500/f);
-  }
-  else{
-    delayMicroseconds(500000/f);
-  }
-}
-
-void staticClean(){
-  // PUMPS IN
-  extDigitalWrite(9, 1);
-  analogWrite(9, 255);
-  // WAIT
-  delay(250);
-  extDigitalWrite(9, 0);
-  analogWrite(9, 0);
-  delay(250);
-}
 
 
 void colorWipe(uint32_t color, int wait) {
@@ -97,7 +34,7 @@ void colorWipe(uint32_t color, int wait) {
   }
 }
 
-
+// Control the RGB LEDs
 void GcodeSuite::G93(){
   if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')&&parser.seen('I')){
     int red = parser.intval('R'); 
@@ -119,12 +56,12 @@ void GcodeSuite::G93(){
 
 void GcodeSuite::G94(){}
 
+// Returns the pressure
 void GcodeSuite::G95(){
   SERIAL_ECHOLNPAIR("Pressure:",force.readPressure());
 }
 
 void GcodeSuite::G96(){
-  staticClean();
 }
 
 
@@ -133,8 +70,8 @@ void GcodeSuite::G97(){
   float pressure_set;
   
   if (parser.seen('P')){
-     pressure_set = parser.intval('P'); 
-     pumpsyringe(pressure_set);
+    pressure_set = parser.intval('P'); 
+    pumpsyringe(pressure_set);
   }
   else
   {
@@ -146,25 +83,20 @@ void GcodeSuite::G97(){
 void GcodeSuite::G98(){
   // frequency value in Hz 
   if(parser.seen('F')){
-    int16_t f = parser.intval('F');
-    
-    // Open the valve
-    valve_it(f);
+    int frequency = parser.intval('F');
+    valve.frequencyToggleValve(frequency);
   }
-  else
-  {
+  else{
     SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
   }
 }
+
 
 void GcodeSuite::G40(){
   valve.toggleValve();
 }
 
-void GcodeSuite::G41(){
-  extDigitalWrite(16, 0);
-  analogWrite(16, 0);
-}
+void GcodeSuite::G41(){}
 
 void GcodeSuite::pumpsyringe(float pressure_set){
   float pos=current_position.z;
@@ -189,24 +121,3 @@ void GcodeSuite::pumpsyringe(float pressure_set){
   }
 }
 
-// void GcodeSuite::pumpsyringe(float pressure_set){
-//   float pos=current_position.z;
-//   float pressure_read = force.readPressure();
-//   // set_relative_mode(true);
-//   // planner.synchronize();
-//   SERIAL_ECHOLNPAIR("PSET:",pressure_set);
-//   float min_presure = pressure_set-0.1;
-//   float max_presure = pressure_set+0.1;
-
-//   while(pressure_read<min_presure || pressure_read>=max_presure){
-//     if(pressure_read<min_presure){
-//       pos+=0.01;
-//     }
-//     else{
-//       pos-=0.01;
-//     }
-//     do_blocking_move_to_z(pos, 10);
-//     pressure_read = force.readPressure();
-//     SERIAL_ECHOLNPAIR("\tP_for:",pressure_read);
-//   }
-// }
