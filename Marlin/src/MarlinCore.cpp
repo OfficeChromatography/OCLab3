@@ -720,7 +720,7 @@ void idle(
       no_stepper_sleep
     #endif
   );
-
+  valve.securityCheck();
   thermalManager.manage_heater();
 
   #if ENABLED(PRINTCOUNTER)
@@ -1227,7 +1227,7 @@ void loop() {
     // float pressure;
     idle();
     
-    valve.securityCheck();
+    
 
     #if ENABLED(SDSUPPORT)
       card.checkautostart();

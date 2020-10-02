@@ -91,8 +91,19 @@ void GcodeSuite::G98(){
   }
 }
 
+// void GcodeSuite::G40(){
+//   float distanceX;
+//   float distanceZ;
+//   (parser.seen('X')) ? distanceX = parser.floatval('X') : 0;
+//   (parser.seen('Z')) ? distanceZ = parser.floatval('Z') : 0;
+//   xyz_pos_t pos = {current_position.x + distanceX, current_position.y, current_position.z + distanceZ};
+//   valve.openValve();
+//   do_blocking_move_to(pos,10);
+//   valve.closeValve();
+// }
 
 void GcodeSuite::G40(){
+  planner.synchronize();
   valve.toggleValve();
 }
 

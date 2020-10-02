@@ -25,15 +25,19 @@ void ValveOpen::toggleValve(){
 
 void ValveOpen::openValve(){
     open = true;
-    extDigitalWrite(pin, 1);
-    analogWrite(pin, 255);
+    // extDigitalWrite(pin, 1);
+    // analogWrite(pin, 255);
     setClosingTime(millis());
+    extDigitalWrite(17, 1);
+    analogWrite(17, 255);
 }
 
 void ValveOpen::closeValve(){
     open = false;
-    extDigitalWrite(pin, 0);
-    analogWrite(pin, 0);
+    // extDigitalWrite(pin, 0);
+    // analogWrite(pin, 0);
+    extDigitalWrite(17, 0);
+    analogWrite(17, 0);
 }
 
 bool ValveOpen::isOpen(){
