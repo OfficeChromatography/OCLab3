@@ -12,7 +12,7 @@ ValveOpen::ValveOpen(){
     pin = 16;
     open = false;
     closingTime = 0;
-    MaxOpenPeriod = 10000; // in ms
+    MaxOpenPeriod = 30000; // in ms
 }
 
 void ValveOpen::toggleValve(){
