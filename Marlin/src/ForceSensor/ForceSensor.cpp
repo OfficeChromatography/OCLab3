@@ -84,9 +84,9 @@ double ForceSensor::readPressure(void) {
     double finalResult = movingAverange(meanResult);
     // double pressure = 0.030315924080126185*finalResult -42.01436809654545;
 
-    double force = (finalResult-_zero_offset)*44.4822/(15000-finalResult);
-    double psi = force*5.57838;
-    double psi_error = 1.5740433314276985*psi -14.703999746307119;
+    double force = (finalResult-_zero_offset)*44.4822/(16000-_zero_offset);
+    double psi = (force/78.5)*145.038;
+    // double psi_error = 1.5740433314276985*psi -14.703999746307119;
 
     // double withoutoffset = finalResult-_zero_offset;
     // double result = 0.02809467153305912*withoutoffset;
@@ -98,11 +98,12 @@ double ForceSensor::readPressure(void) {
     // SERIAL_ECHOLNPAIR("wind_for:",move);
     // SERIAL_ECHOPAIR("\tzero_for:",_zero_offset);
     // if (result > _zero_offset) {
+
     // //     // force = ((raw-_zero_offset)*4.44822)/14000;
     // //     // pressure = (force/(4*3.14))*145.0380;
     // result = (result*0.02776580669424442)-41.735036877949476;
     // }
-    return psi_error;
+    return psi;
     // return move;
 }
 
