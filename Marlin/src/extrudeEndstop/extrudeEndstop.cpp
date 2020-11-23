@@ -10,13 +10,13 @@
 #include "../MarlinCore.h"
 
 ExtrudeEndstop::ExtrudeEndstop(){
-    pin = 23;
+    pin = 25;
     state = false;
 }
 
 void ExtrudeEndstop::checkEndstop(){
     if (state && digitalRead(pin) == HIGH){
-        quickstop_stepper();
+        disable_e_steppers(); //quickstop_stepper()
         state = false;
     } else if (digitalRead(pin) == LOW) {
         state = true;

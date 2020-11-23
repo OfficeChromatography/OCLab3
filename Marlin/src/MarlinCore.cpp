@@ -213,7 +213,7 @@ const char NUL_STR[] PROGMEM = "",
            SP_E_LBL[] PROGMEM = " E:";
 
 ValveOpen valve = ValveOpen();
-ExtrudeEndstop ExtrudeEndstp = ExtrudeEndstop();
+//ExtrudeEndstop ExtrudeEndstp = ExtrudeEndstop();
 
 MarlinState marlin_state = MF_INITIALIZING;
 
@@ -724,7 +724,7 @@ void idle(
   );
   valve.securityCheck();
   thermalManager.manage_heater();
-  ExtrudeEndstp.checkEndstop();
+  //ExtrudeEndstp.checkEndstop();
 
   #if ENABLED(PRINTCOUNTER)
     print_job_timer.tick();
@@ -1201,10 +1201,10 @@ void setup() {
   marlin_state = MF_RUNNING;
 
   // Force Sensor initial
-  force.begin();
+  //force.begin();
   
-  endstops.enable(true);
-  homeaxis(Z_AXIS);
+  //endstops.enable(true);
+  //homeaxis(Z_AXIS);
   
   SETUP_LOG("setup() completed.");
   

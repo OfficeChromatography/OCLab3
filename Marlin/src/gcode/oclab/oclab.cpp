@@ -107,7 +107,13 @@ void GcodeSuite::G40(){
   valve.toggleValve();
 }
 
-void GcodeSuite::G41(){}
+void GcodeSuite::G41(){
+  int pin = 11;
+  while(digitalRead(pin) == HIGH){   
+    current_position.e -= 0.01;
+    line_to_current_position(homing_feedrate(Z_AXIS));
+  }
+}
 
 void GcodeSuite::pumpsyringe(float pressure_set){
   float pos=current_position.z;
