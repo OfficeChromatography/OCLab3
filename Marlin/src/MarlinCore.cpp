@@ -61,7 +61,6 @@
 #include "ForceSensor/ForceSensor.h"
 
 #include "../src/OpenValve/openValve.h"
-#include "../src/extrudeEndstop/extrudeEndstop.h"
 
 
 #if ENABLED(TOUCH_BUTTONS)
@@ -213,7 +212,6 @@ const char NUL_STR[] PROGMEM = "",
            SP_E_LBL[] PROGMEM = " E:";
 
 ValveOpen valve = ValveOpen();
-//ExtrudeEndstop ExtrudeEndstp = ExtrudeEndstop();
 
 MarlinState marlin_state = MF_INITIALIZING;
 
@@ -724,7 +722,6 @@ void idle(
   );
   valve.securityCheck();
   thermalManager.manage_heater();
-  //ExtrudeEndstp.checkEndstop();
 
   #if ENABLED(PRINTCOUNTER)
     print_job_timer.tick();
