@@ -17,18 +17,19 @@ public:
                 TwoWire *twoWire = &Wire);
 
   double readPressure(void);
-  
+  double readForce(void);
+  double readMass(void);
   double sample(void);
   double overSampleAndMean(int number_of_samples);
   double movingAverange(double marcel);
 
   double movingAverangeSamples[SIZE_DEFAULT_MOVING_AVERANGE];
-
+  void getZero(void);
   
 private:
     int windowsSize = SIZE_DEFAULT_MOVING_AVERANGE;
 
-    void getZero(void);
+    
 
     double _zero_offset;
     uint8_t _i2c_addr;

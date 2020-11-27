@@ -58,7 +58,30 @@ void GcodeSuite::G94(){}
 
 // Returns the pressure
 void GcodeSuite::G95(){
-  SERIAL_ECHOLNPAIR("Pressure:",force.readPressure());
+
+  if(parser.seen('M')){
+    for(int i =0; i<10; i++){
+      force.readMass();
+    }
+    SERIAL_ECHOLNPAIR("Mass:",force.readMass());
+  }
+
+  if(parser.seen('Z')){
+    force.getZero();
+    SERIAL_ECHOLN("Zero");
+  }
+
+  if(parser.seen('R')){
+    SERIAL_ECHOLNPAIR("RawData:",force.sample());
+  }
+  
+  if(parser.seen('P')){
+    SERIAL_ECHOLNPAIR("Pressure:",force.readPressure());
+  }
+
+  if(parser.seen('F')){
+    SERIAL_ECHOLNPAIR("Force:",force.readForce());
+  }
 }
 
 void GcodeSuite::G96(){
