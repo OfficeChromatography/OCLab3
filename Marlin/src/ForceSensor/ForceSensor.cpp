@@ -51,7 +51,7 @@ ForceSensor::ForceSensor(uint16_t PSI_min, uint16_t PSI_max, uint16_t zero_offse
   _PSI_min = PSI_min;
   _PSI_max = PSI_max;
   _zero_offset = zero_offset;
-//   getZero();
+   getZero();
 }
 
 /**************************************************************************/
@@ -68,7 +68,7 @@ void ForceSensor::begin(uint8_t i2c_addr, TwoWire *twoWire) {
     _i2c = twoWire;
 
     _i2c->begin();
-    
+
     getZero();
 }
 
@@ -133,7 +133,7 @@ double ForceSensor::movingAverange(double sample){
     movingAverangeSamples[0] = sample/windowsSize;
     result+=movingAverangeSamples[0];
     return result;
-}   
+}
 
 void ForceSensor::getZero(void) {
     double move,result;
@@ -141,7 +141,7 @@ void ForceSensor::getZero(void) {
     float pos=current_position.z-1;
     do_blocking_move_to_z(pos, 10);
     // homeaxis(Z_AXIS);
-    
+
     for(int i = 0;i<windowsSize;i++) movingAverangeSamples[i]=0;
     for(int i = 0;i<=windowsSize;i++){
         result = overSampleAndMean(50);
