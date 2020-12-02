@@ -203,7 +203,7 @@
   #define RAMPS_D8_PIN                         8
 #endif
 #ifndef RAMPS_D9_PIN
-  #define RAMPS_D9_PIN                        13
+  #define RAMPS_D9_PIN                         9
 #endif
 #ifndef RAMPS_D10_PIN
   #define RAMPS_D10_PIN                       10
