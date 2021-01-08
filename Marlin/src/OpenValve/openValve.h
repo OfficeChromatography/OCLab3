@@ -5,10 +5,12 @@ class ValveOpen{
     bool open;
     millis_t closingTime;
     int MaxOpenPeriod;
+    int maxFrequency;
     void setClosingTime(millis_t ms);
     void delayFromFrequency(int frequency);
   public:
     ValveOpen();
+    int getMaxFrequency();
     void toggleValve();
     void frequencyToggleValve(int frequency);
     void openValve();

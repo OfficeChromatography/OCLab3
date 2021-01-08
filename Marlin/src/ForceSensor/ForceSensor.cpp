@@ -51,7 +51,7 @@ ForceSensor::ForceSensor(uint16_t PSI_min, uint16_t PSI_max, uint16_t zero_offse
   _PSI_min = PSI_min;
   _PSI_max = PSI_max;
   _zero_offset = zero_offset;
-   getZero();
+  // getZero();
 }
 
 /**************************************************************************/
@@ -72,27 +72,71 @@ void ForceSensor::begin(uint8_t i2c_addr, TwoWire *twoWire) {
     getZero();
 }
 
+
 /**************************************************************************/
 /*!
-    @brief Read and calculate the pressure
-    @returns The measured pressure, in hPa on success, NAN on failure
+    @brief takes a digital value and convert it to force value
+    @returns The measured force, is in Newtons
 */
 /**************************************************************************/
+double ForceSensor::digitalToForce(double digital_value){
+    return (digital_value-_zero_offset)*44.4822/(16000-_zero_offset);
+}
 
+
+/**************************************************************************/
+/*!
+    @brief Converts Newton to psi for an Specific Syringe
+    @returns The measured pressure, is in psi
+*/
+/**************************************************************************/
+double ForceSensor::forceToPressure(double force){
+    return (force/78.5)*145.038;
+}
+
+
+/**************************************************************************/
+/*!
+    @brief Apply a mean of size 50 with a moving averange of 10 
+    @returns The measured force, is in Newtons
+*/
+/**************************************************************************/
 double ForceSensor::readForce(void){
-    double meanResult = overSampleAndMean(50);
-    double finalResult = movingAverange(meanResult);
-    double force = (finalResult-_zero_offset)*44.4822/(16000-_zero_offset);
+    double mean = overSampleAndMean(5);
+    double moving_averange = movingAverange(mean);
+    double force = digitalToForce(moving_averange);
     return force;
 }
 
+/**************************************************************************/
+/*!
+    @brief After readForceProcess retrieves the pressure 
+    @returns The measured pressure, is in psi
+*/
+/**************************************************************************/
+double ForceSensor::readPressure(void) {
+    for(int i=0;i<9;i++){
+       readForce();
+    }
+    return forceToPressure(readForce());
+}
+
+
+/**************************************************************************/
+/*!
+    @brief After readForceProcess retrieves the equivalent mass that would 
+    create the same force because of gravity 
+    @returns The measured pressure, is in psi
+*/
+/**************************************************************************/
 double ForceSensor::readMass(void){
     return readForce()*1000/9.8;
 }
 
-double ForceSensor::readPressure(void) {
-    double psi = (readForce()/78.5)*145.038;
-    return psi;
+
+
+int ForceSensor::getMaxPressureSensor(void){
+    return MAX_PREASSURE_SENSOR;
 }
 
 
@@ -140,11 +184,11 @@ void ForceSensor::getZero(void) {
     endstops.enable(true);
     float pos=current_position.z-1;
     do_blocking_move_to_z(pos, 10);
-    // homeaxis(Z_AXIS);
+    homeaxis(Z_AXIS);
 
     for(int i = 0;i<windowsSize;i++) movingAverangeSamples[i]=0;
     for(int i = 0;i<=windowsSize;i++){
-        result = overSampleAndMean(50);
+        result = overSampleAndMean(10);
         move = movingAverange(result);
     }
     _zero_offset = move;

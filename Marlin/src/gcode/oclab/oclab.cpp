@@ -27,7 +27,7 @@ extern ValveOpen valve ;
 
 
 
-void colorWipe(uint32_t color, int wait) {
+void colorWipe(uint32_t color) {
   for(uint16_t i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
     strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
     strip.show();                          //  Update strip to match
@@ -36,39 +36,31 @@ void colorWipe(uint32_t color, int wait) {
 
 // Control the RGB LEDs
 void GcodeSuite::G93(){
-  if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')&&parser.seen('I')){
+  if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')){
     int red = parser.intval('R'); 
     int green = parser.intval('G'); 
     int blue = parser.intval('B'); 
-    int brigthness = parser.intval('I'); 
+    // int brigthness = parser.intval('I'); 
 
     strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
     strip.show();            // Turn OFF all pixels ASAP
-    strip.setBrightness(brigthness); // Set BRIGHTNESS to about 1/5 (max = 255)
-    colorWipe(strip.Color(red, green, blue),50);
+    // strip.setBrightness(brigthness); // Set BRIGHTNESS to about 1/5 (max = 255)
+    colorWipe(strip.Color(red, green, blue));
   }
   else
   {
-    colorWipe(strip.Color(0, 0, 0),50);
+    SERIAL_ECHOLN("Please send an RGB and brigthness value");
   }
 }
 
 
-void GcodeSuite::G94(){}
+
 
 // Returns the pressure
 void GcodeSuite::G95(){
 
   if(parser.seen('M')){
-    for(int i =0; i<10; i++){
-      force.readMass();
-    }
-    SERIAL_ECHOLNPAIR("Mass:",force.readMass());
-  }
-
-  if(parser.seen('Z')){
-    force.getZero();
-    SERIAL_ECHOLN("Zero");
+    SERIAL_ECHOLNPAIR("Mass[gr]:",force.readMass());
   }
 
   if(parser.seen('R')){
@@ -76,11 +68,11 @@ void GcodeSuite::G95(){
   }
   
   if(parser.seen('P')){
-    SERIAL_ECHOLNPAIR("Pressure:",force.readPressure());
+    SERIAL_ECHOLNPAIR("Pressure[psi]:",force.readPressure());
   }
 
   if(parser.seen('F')){
-    SERIAL_ECHOLNPAIR("Force:",force.readForce());
+    SERIAL_ECHOLNPAIR("Force[N]:",force.readForce());
   }
 }
 
@@ -107,7 +99,13 @@ void GcodeSuite::G98(){
   // frequency value in Hz 
   if(parser.seen('F')){
     int frequency = parser.intval('F');
-    valve.frequencyToggleValve(frequency);
+    if(frequency<=valve.getMaxFrequency()){
+      valve.frequencyToggleValve(frequency);
+    }
+    else
+    {
+      SERIAL_ECHOLNPAIR("Frequency should be equal or less than:", valve.getMaxFrequency());
+    }    
   }
   else{
     SERIAL_ECHOLNPGM("Please Insert the frequency wanted");
@@ -125,6 +123,7 @@ void GcodeSuite::G98(){
 //   valve.closeValve();
 // }
 
+
 void GcodeSuite::G40(){
   planner.synchronize();
   valve.toggleValve();
@@ -139,25 +138,78 @@ void GcodeSuite::G41(){
 }
 
 void GcodeSuite::pumpsyringe(float pressure_set){
+  float ABSOLUTE_MAX_PRESSURE = 80;
   float pos=current_position.z;
   float pressure_read = force.readPressure();
   // set_relative_mode(true);
   // planner.synchronize();
-  SERIAL_ECHOLNPAIR("PSET:",pressure_set);
-  float min_pressure = pressure_set-0.5;
-  float max_pressure = pressure_set+0.5;
 
-  while(pressure_read<min_pressure || pressure_read>=max_pressure){
-    endstops.enable(true);
-    if(pressure_read<min_pressure){
-        pos+=0.01;
+  if(pressure_set > ABSOLUTE_MAX_PRESSURE){
+    SERIAL_ECHOLN("Pressure settled too high!!");
+  }
+  else{
+    SERIAL_ECHOLNPAIR("PSET:",pressure_set);
+    float min_pressure = pressure_set*0.95;
+    float max_pressure = pressure_set*1.05;
+    while(pressure_read<min_pressure || pressure_read>=max_pressure){
+      if(pressure_read<min_pressure){
+          pos+=(0.01*errorFunction(min_pressure, pressure_read));
+      }
+      if(pressure_read>max_pressure){
+          pos-=(0.01*errorFunction(max_pressure, pressure_read));
+      }
+      if(pressure_read < ABSOLUTE_MAX_PRESSURE){
+        endstops.enable(true);
+        do_blocking_move_to_z(pos, 10);
+        pressure_read = force.readPressure();
+        SERIAL_ECHOLNPAIR("force_N:",force.readPressure());
+      }
+      else{
+        SERIAL_ECHOLN("Pressure is too high!!");
+        break;
+      }
     }
-    if(pressure_read>max_pressure){
-        pos-=0.01;
-    }
-    do_blocking_move_to_z(pos, 10);
-    pressure_read = force.readPressure();
-    SERIAL_ECHOLNPAIR("force_N:",force.readPressure());
   }
 }
 
+int GcodeSuite::errorFunction(float set, float real){
+  int error = abs(set - real);
+  return (error)<1?(1):(error);
+}
+
+void GcodeSuite::G94(){
+  if(parser.seen('X') && parser.seen('Z') && parser.seen('F') && parser.seen('P')){
+    float pressure = parser.floatval('P');
+    float feedrate = parser.floatval('F');
+    xyze_pos_t initial =  current_position;
+    xyze_pos_t temporary = current_position;
+    xyze_pos_t destination = { parser.floatval('X'), current_position.y , parser.floatval('Z') };
+    // list <double>  all_pressures_measured;
+    boolean reverse = false;
+    double pressure_mesured;
+    pumpsyringe(pressure);
+    while(temporary.z<=destination.z){
+      pressure_mesured = force.forceToPressure(force.digitalToForce(force.sample()));
+      if(pressure_mesured < pressure){
+        temporary.z+=0.1;
+      }
+      if(reverse){
+        if(temporary.x<=destination.x){
+          temporary.x+=0.01;
+        }
+        else{
+          reverse = true;
+        }
+      }
+      else{
+        if(temporary.x>=initial.x){
+          temporary.x-=0.01;
+        }
+        else{
+          reverse = false;
+        }
+      }
+      do_blocking_move_to(temporary, feedrate);
+    }
+  }
+}

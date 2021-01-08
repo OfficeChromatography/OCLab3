@@ -22,17 +22,20 @@ public:
   double sample(void);
   double overSampleAndMean(int number_of_samples);
   double movingAverange(double marcel);
+  int getMaxPressureSensor();
 
+  double digitalToForce(double digital_value);
+  double forceToPressure(double force);
   double movingAverangeSamples[SIZE_DEFAULT_MOVING_AVERANGE];
-  void getZero(void);
-  
+
 private:
     int windowsSize = SIZE_DEFAULT_MOVING_AVERANGE;
 
-    
+    int MAX_PREASSURE_SENSOR = 80;
 
     double _zero_offset;
     uint8_t _i2c_addr;
+    void getZero(void);
 
     // int movingAverangeSamples[SIZE_DEFAULT_MOVING_AVERANGE];
 

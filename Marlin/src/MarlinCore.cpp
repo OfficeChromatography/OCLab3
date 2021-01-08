@@ -685,7 +685,7 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
  * Standard idle routine keeps the machine alive
  */
 void idle(
- 
+
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
     bool no_stepper_sleep/*=false*/
   #endif
@@ -1198,13 +1198,13 @@ void setup() {
   marlin_state = MF_RUNNING;
 
   // Force Sensor initial
-  //force.begin();
-  
+  // force.begin();
+
   //endstops.enable(true);
   //homeaxis(Z_AXIS);
-  
+
   SETUP_LOG("setup() completed.");
-  
+
 }
 
 /**
@@ -1226,8 +1226,8 @@ void loop() {
   do {
     // float pressure;
     idle();
-    
-    
+
+
 
     #if ENABLED(SDSUPPORT)
       card.checkautostart();

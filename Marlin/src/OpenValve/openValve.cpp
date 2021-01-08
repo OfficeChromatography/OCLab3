@@ -9,6 +9,7 @@
 #include "../gcode/gcode.h"
 
 ValveOpen::ValveOpen(){
+    maxFrequency = 1400;
     pin = 16;
     open = false;
     closingTime = 0;
@@ -73,4 +74,8 @@ void ValveOpen::delayFromFrequency(int frequency){
     else{
         delayMicroseconds(500000/frequency);
     }
+}
+
+int ValveOpen::getMaxFrequency(){
+    return maxFrequency;
 }
