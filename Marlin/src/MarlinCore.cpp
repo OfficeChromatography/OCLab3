@@ -1198,7 +1198,7 @@ void setup() {
   marlin_state = MF_RUNNING;
 
   // Force Sensor initial
-  // force.begin();
+  force.begin();
 
   //endstops.enable(true);
   //homeaxis(Z_AXIS);
