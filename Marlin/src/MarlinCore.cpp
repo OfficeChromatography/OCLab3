@@ -1227,8 +1227,6 @@ void loop() {
     // float pressure;
     idle();
 
-
-
     #if ENABLED(SDSUPPORT)
       card.checkautostart();
       if (card.flag.abort_sd_printing) abortSDPrinting();

@@ -77,6 +77,50 @@ void GcodeSuite::G95(){
 }
 
 void GcodeSuite::G96(){
+  float ABSOLUTE_MAX_PRESSURE = 80;
+  float pressure_set = 30;
+
+  if (parser.seen('P')){
+    pressure_set = parser.intval('P'); 
+  }
+
+  get_destination_from_command();
+  xyze_pos_t final_destination = destination;
+  // float final_destination_z = destination.z;
+  destination.z = current_position.z;
+
+  float pressure_read = force.readPressure();
+  // set_relative_mode(true);
+  // planner.synchronize();
+  
+  SERIAL_ECHOLNPAIR("PSET:",pressure_set);
+  float min_pressure = pressure_set*0.95;
+  float max_pressure = pressure_set*1.05;
+  while((pressure_read<min_pressure || pressure_read>=max_pressure) && cartes.x != final_destination.x){
+    if(pressure_read<min_pressure){
+        destination.z+=(0.01*errorFunction(min_pressure, pressure_read));
+    }
+    if(pressure_read>max_pressure){
+        destination.z-=(0.01*errorFunction(max_pressure, pressure_read));
+    }
+    if(pressure_read < ABSOLUTE_MAX_PRESSURE){
+      endstops.enable(true);
+      prepare_line_to_destination();
+      sync_plan_position();
+      pressure_read = force.readPressure();
+      get_cartesian_from_steppers();
+      SERIAL_ECHOLNPAIR("CURRENT_X:",cartes.x);
+      SERIAL_ECHOLNPAIR("FINAL_X:",final_destination.x);
+      SERIAL_ECHOLNPAIR("force_N:",force.readPressure());
+    }
+    else{
+      SERIAL_ECHOLN("Pressure is too high!!");
+      break;
+    }
+  }
+  SERIAL_ECHOLNPAIR("MOVES STILL", planner.movesplanned());
+  planner.synchronize();
+    //   }// float pressure_read = force.readPressure();
 }
 
 
