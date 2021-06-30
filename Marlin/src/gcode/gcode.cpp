@@ -344,14 +344,14 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 91: set_relative_mode(true);  break;                   // G91: Relative Mode
 
       case 92: G92(); break;                                      // G92: Set current axis position(s)
-      case 93: G93(); break;                                      // G93: Valve at a certain frequency  G93 Fx
-      case 94: G94(); break;                                      // G94: Pumpit with pressure control 
-      case 95: G95(); break;           
-      case 96: G96(); break;  
-      case 97: G97(); break; 
-      case 98: G98(); break; 
-      case 40: G40(); break; 
-      case 41: G41(); break; 
+      case 93: G93(); break;                                      // G93: Control the RGB LEDs
+      case 94: G94(); break;                                      // G94: NOT IMPLEMENTED
+      case 95: G95(); break;                                      // G95: Returns the pressure
+      case 96: G96(); break;                                      // G96: Returns the air temperature and humidity
+      case 97: G97(); break;                                      // G97: Set the pressure
+      case 98: G98(); break;                                      // G98: Open the valve at certain frequency
+      case 40: G40(); break;                                      // G40: Close the valve
+      case 41: G41(); break;                                      // G41: Open the valve
       
 
       #if HAS_MESH

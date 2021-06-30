@@ -504,8 +504,8 @@ private:
   static void G98();
   static void G40();
   static void G41();
-  static void pumpsyringe(float pressure_set);
-  static int errorFunction(float set, float real);
+  static void G42();
+
 
 
   #if ENABLED(CALIBRATION_GCODE)

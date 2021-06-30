@@ -61,7 +61,7 @@
 #include "ForceSensor/ForceSensor.h"
 
 #include "../src/OpenValve/openValve.h"
-
+#include <DHT.h>
 
 #if ENABLED(TOUCH_BUTTONS)
   #include "feature/touch/xpt2046.h"
@@ -190,6 +190,14 @@
 // Initializing pressure sensor
 
 ForceSensor force = ForceSensor();
+
+// Air Sensor
+#define DHTPIN 40
+#define DHTTYPE DHT22 
+DHT dht(DHTPIN, DHTTYPE);
+
+
+
 const char NUL_STR[] PROGMEM = "",
            M112_KILL_STR[] PROGMEM = "M112 Shutdown",
            G28_STR[] PROGMEM = "G28",
@@ -1199,7 +1207,7 @@ void setup() {
 
   // Force Sensor initial
   force.begin();
-
+  dht.begin();
   //endstops.enable(true);
   //homeaxis(Z_AXIS);
 
