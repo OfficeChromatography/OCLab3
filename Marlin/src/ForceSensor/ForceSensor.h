@@ -36,7 +36,8 @@ private:
     double _zero_offset;
     uint8_t _i2c_addr;
     void getZero(void);
-
+    bool isSyringeLoad(void);
+    double testingMeasure(void);
     // int movingAverangeSamples[SIZE_DEFAULT_MOVING_AVERANGE];
 
     uint32_t _PSI_min, _PSI_max;

@@ -9,7 +9,7 @@
 #include "../../module/endstops.h"
 #include "../../OpenValve/openValve.h"
 #include "lib/DHT/src/DHT.h"
-#include "pumpcontrol/pumpcontrol.h"
+#include "src/gcode/oclab/pumpcontrol/pumpcontrol.h"
 
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
@@ -21,7 +21,7 @@
 #endif
 
 #define LED_PIN_PIXEL    6
-#define LED_COUNT 16
+#define LED_COUNT 8
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN_PIXEL, NEO_GRBW + NEO_KHZ800);
 extern ForceSensor force ;
 extern ValveOpen valve ;
@@ -36,8 +36,8 @@ int errorFunction(float set, float real){
 }
 
 void pumpsyringe(float pressure_set){
-  PumpControl control = PumpControl(pressure_set);
-  control.compute();
+  PumpControl pump =  PumpControl(pressure_set);
+  pump.compute();
 }
 
 void colorWipe(uint32_t color) {

@@ -14,6 +14,6 @@ class PumpControl{
     void move();
 
   public:
-    PumpControl(float pressure_set);
     void compute();
+    PumpControl(float pressure_set);
 };

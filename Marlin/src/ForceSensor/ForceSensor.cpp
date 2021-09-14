@@ -38,6 +38,8 @@
 #include "ForceSensor.h"
 #include "../module/motion.h"
 #include "../module/endstops.h"
+#include "src/MarlinCore.h"
+
 
 /**************************************************************************/
 /*!
@@ -69,7 +71,7 @@ void ForceSensor::begin(uint8_t i2c_addr, TwoWire *twoWire) {
 
     _i2c->begin();
 
-    getZero();
+    this->getZero();
 }
 
 
@@ -180,16 +182,41 @@ double ForceSensor::movingAverange(double sample){
 }
 
 void ForceSensor::getZero(void) {
-    double move,result;
     endstops.enable(true);
-    float pos=current_position.z-1;
-    do_blocking_move_to_z(pos, 10);
-    homeaxis(Z_AXIS);
+    if(isSyringeLoad()){
+        SERIAL_ERROR_MSG("REMOVE THE SYRINGE AND RECONNECT!!!!");
+        SERIAL_ECHOLN();
+        minkill(true);
+    }else{
+        homeaxis(Z_AXIS);
+        _zero_offset = testingMeasure();
+        SERIAL_ECHOLN("NEW ZERO SETTLED");
+    }
+}
 
+bool ForceSensor::isSyringeLoad(){
+    double backmeasure, pressedmeassure;
+    
+    float pos=current_position.z-1;
+    do_blocking_move_to_z(pos, G0_FEEDRATE/50);
+    backmeasure = testingMeasure();
+
+    pos=current_position.z+2;
+    do_blocking_move_to_z(pos, G0_FEEDRATE/50);
+    pressedmeassure=testingMeasure();
+
+    if(backmeasure+100<pressedmeassure){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+double ForceSensor::testingMeasure(){
+    double measure;
     for(int i = 0;i<windowsSize;i++) movingAverangeSamples[i]=0;
     for(int i = 0;i<=windowsSize;i++){
-        result = overSampleAndMean(10);
-        move = movingAverange(result);
-    }
-    _zero_offset = move;
+            measure = movingAverange(overSampleAndMean(10));
+        }
+    return measure;
 }
