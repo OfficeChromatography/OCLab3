@@ -198,11 +198,11 @@ bool ForceSensor::isSyringeLoad(){
     double backmeasure, pressedmeassure;
     
     float pos=current_position.z-1;
-    do_blocking_move_to_z(pos, G0_FEEDRATE/50);
+    do_blocking_move_to_z(pos, G0_FEEDRATE/300);
     backmeasure = testingMeasure();
 
     pos=current_position.z+2;
-    do_blocking_move_to_z(pos, G0_FEEDRATE/50);
+    do_blocking_move_to_z(pos, G0_FEEDRATE/300);
     pressedmeassure=testingMeasure();
 
     if(backmeasure+100<pressedmeassure){

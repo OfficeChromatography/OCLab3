@@ -13,27 +13,27 @@ int PumpControl::errorFunction(float set, float real){
 }
     
 void PumpControl::calculateNewPosition(){
-  if(this->pressure_read< this->min_pressure){
-    int error = this->errorFunction(this->min_pressure, this->pressure_read);
-    this->pos+=(0.03*error);
+  if(pressure_read< min_pressure){
+    int error = errorFunction(min_pressure, pressure_read);
+    pos+=(0.025*error);
   }
-  if(this->pressure_read> this->max_pressure){
-    int error = this->errorFunction(this->max_pressure, this->pressure_read);
-    this->pos-=(0.03*error);
+  if(pressure_read > max_pressure){
+    int error = errorFunction(max_pressure, pressure_read);
+    pos-=(0.025*error);
   }
 }
 
 void PumpControl::move(){
   endstops.enable(true);
-  do_blocking_move_to_z(this->pos, G0_FEEDRATE);
-  this->pressure_read = force.readPressure();
-  SERIAL_ECHOPAIR("Ps: ", this->pressure_set);
-  SERIAL_ECHOLNPAIR("\tPr: ", this->pressure_read);
+  do_blocking_move_to_z(pos, G0_FEEDRATE/500);
+  pressure_read = force.readPressure();
+  SERIAL_ECHOPAIR("Ps: ", pressure_set);
+  SERIAL_ECHOLNPAIR("\tPr: ", pressure_read);
 }
 
 PumpControl::PumpControl(float pressure_set){
-  boolean toHigh = pressure_set > this->ABSOLUTE_MAX_PRESSURE;
-  boolean toLow = pressure_set < this->ABSOLUTE_MIN_PRESSURE;
+  toHigh = pressure_set > ABSOLUTE_MAX_PRESSURE;
+  toLow = pressure_set < ABSOLUTE_MIN_PRESSURE;
 
   if(toHigh || toLow){
     (toHigh)?(SERIAL_ECHOLN("Pressure settled too high!!")):
@@ -41,19 +41,30 @@ PumpControl::PumpControl(float pressure_set){
   }
   else{
     this->pressure_set = pressure_set;
-    this->min_pressure = pressure_set-1;
-    this->max_pressure = pressure_set-1;
+    min_pressure = pressure_set-1;
+    max_pressure = pressure_set+1;
   }
 }
 
+bool PumpControl::is_out_of_range(){
+  if(toHigh || toLow){
+    (toHigh)?(SERIAL_ECHOLN("Pressure settled too high!!")):
+    (SERIAL_ECHOLN("Pressure settled too low, must be greater than 2!!"));
+    return true;
+  }
+  return false;
+}
+
 void PumpControl::compute(){
-  while(pressure_read<min_pressure || pressure_read>=max_pressure){
-    this->calculateNewPosition();
-    if(this->pressure_read < this->ABSOLUTE_MAX_PRESSURE){
-      this->move();
-    }else{
-      SERIAL_ECHOLN("Pressure is too high!!");
-      break;
+  if(!is_out_of_range()){
+    while(pressure_read<min_pressure || pressure_read>=max_pressure){
+      calculateNewPosition();
+      if(pressure_read < ABSOLUTE_MAX_PRESSURE){
+        move();
+      }else{
+        SERIAL_ECHOLN("Pressure is too high!!");
+        break;
+      }
     }
   }
 }

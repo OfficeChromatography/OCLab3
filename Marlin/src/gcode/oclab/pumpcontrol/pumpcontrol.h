@@ -8,10 +8,13 @@ class PumpControl{
     float pressure_set;
     float min_pressure;
     float max_pressure;
+    bool toHigh;
+    bool toLow;
 
     int errorFunction(float set, float real);
     void calculateNewPosition();
     void move();
+    bool is_out_of_range();
 
   public:
     void compute();
