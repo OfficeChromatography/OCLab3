@@ -2,7 +2,10 @@ extern ForceSensor force ;
 class PumpControl{
   private:
     int ABSOLUTE_MAX_PRESSURE = 80;
-    int ABSOLUTE_MIN_PRESSURE = 2;
+    int ABSOLUTE_MIN_PRESSURE = 13;
+    float GAIN = 0.03;
+    int LIMIT_PRESSURE_CHANGE_CALCULATION = 20;
+
     float pressure_read = force.readPressure();
     float pos=current_position.z;
     float pressure_set;

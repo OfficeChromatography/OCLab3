@@ -15,11 +15,11 @@ int PumpControl::errorFunction(float set, float real){
 void PumpControl::calculateNewPosition(){
   if(pressure_read< min_pressure){
     int error = errorFunction(min_pressure, pressure_read);
-    pos+=(0.025*error);
+    pos+=(GAIN*error);
   }
   if(pressure_read > max_pressure){
     int error = errorFunction(max_pressure, pressure_read);
-    pos-=(0.025*error);
+    pos-=(GAIN*error);
   }
 }
 
@@ -35,21 +35,25 @@ PumpControl::PumpControl(float pressure_set){
   toHigh = pressure_set > ABSOLUTE_MAX_PRESSURE;
   toLow = pressure_set < ABSOLUTE_MIN_PRESSURE;
 
-  if(toHigh || toLow){
-    (toHigh)?(SERIAL_ECHOLN("Pressure settled too high!!")):
-    (SERIAL_ECHOLN("Pressure settled too low, must be greater than 2!!"));
-  }
-  else{
+  if(!is_out_of_range()){
     this->pressure_set = pressure_set;
-    min_pressure = pressure_set-1;
-    max_pressure = pressure_set+1;
+    if(pressure_set<LIMIT_PRESSURE_CHANGE_CALCULATION){
+      min_pressure = pressure_set-1;
+      max_pressure = pressure_set+1;
+    }else{
+      min_pressure = pressure_set*0.95;
+      max_pressure = pressure_set*1.05;
+    }
   }
 }
 
 bool PumpControl::is_out_of_range(){
   if(toHigh || toLow){
-    (toHigh)?(SERIAL_ECHOLN("Pressure settled too high!!")):
-    (SERIAL_ECHOLN("Pressure settled too low, must be greater than 2!!"));
+    if(toHigh){
+      SERIAL_ECHOLN("Pressure settled too high!!");
+    }else{
+      SERIAL_ECHOLNPAIR("Pressure settled too low, must be greater than ",this->ABSOLUTE_MIN_PRESSURE);
+    }
     return true;
   }
   return false;
