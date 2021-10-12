@@ -8,7 +8,7 @@
 #include "../../feature/joystick.h"
 #include "../../module/endstops.h"
 #include "../../OpenValve/openValve.h"
-#include "lib/DHT/src/DHT.h"
+#include "DHT.h"
 #include "src/gcode/oclab/pumpcontrol/pumpcontrol.h"
 
 #ifdef __AVR__
