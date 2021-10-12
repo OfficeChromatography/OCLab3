@@ -36,6 +36,6 @@ For best results getting help with configuration and troubleshooting, please use
 - [Marlin Configuration](https://www.youtube.com/results?search_query=marlin+configuration) on YouTube
 
 
-# OC-Manager3 SOFTWARE
-OC-Manager3 installation 
+# OC-Manager 3 SOFTWARE
+OC-Manager 3 installation 
 [OC-Manager3](https://github.com/OfficeChromatography/OCLab3-Software)
