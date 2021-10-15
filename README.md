@@ -1,5 +1,5 @@
 # OC-Control 
-A Marlin 3D Printer based Firmware
+A Marlin 2.0 3D Printer based Firmware
 
 ## Marlin 2.0
 
