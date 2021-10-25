@@ -197,10 +197,10 @@ void ForceSensor::getZero(void) {
 bool ForceSensor::isSyringeLoad(){
     double backmeasure, pressedmeassure;
 
-    if(testingMeasure()>1100){
-        return true;
-    }
-    else{
+    // if(testingMeasure()>2000){
+    //     return true;
+    // }
+    // else{
         float pos=current_position.z-1;
         do_blocking_move_to_z(pos, G0_FEEDRATE/300);
         backmeasure = testingMeasure();
@@ -209,12 +209,12 @@ bool ForceSensor::isSyringeLoad(){
         do_blocking_move_to_z(pos, G0_FEEDRATE/300);
         pressedmeassure=testingMeasure();
         
-        if(backmeasure+100<pressedmeassure){
-        return true;
-        }else{
-            return false;
-        }
-    }    
+        // if(backmeasure+100<pressedmeassure){
+        //     return true;
+        // }else{
+        return false;
+    //     }
+    // }    
 }
 
 double ForceSensor::testingMeasure(){
