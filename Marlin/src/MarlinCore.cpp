@@ -1207,7 +1207,7 @@ void setup() {
 
   // Force Sensor initial
   force.begin();
-  dht.begin();
+  // dht.begin();
   //endstops.enable(true);
   //homeaxis(Z_AXIS);
 
