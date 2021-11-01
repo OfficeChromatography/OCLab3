@@ -724,7 +724,7 @@
  */
 //#define DISTINCT_E_FACTORS
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 500 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 500, 500 }
 
 /**
  * Default Max Feed Rate (mm/s)
