@@ -197,7 +197,7 @@ void ForceSensor::getZero(void) {
 bool ForceSensor::isSyringeLoad(){
     double backmeasure, pressedmeassure;
 
-    if(testingMeasure()>1100){
+    if(testingMeasure()>1300){
         return true;
     }
     else{
