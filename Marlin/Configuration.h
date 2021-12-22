@@ -728,6 +728,7 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
+ * Z value 2133 for pitch=1.5 mm, 1600 for pitch=2 mm
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 2133, 500 }
 
