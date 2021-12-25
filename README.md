@@ -13,7 +13,7 @@ To build OC-Control [PlatformIO](http://docs.platformio.org/en/latest/ide.html#p
 
   - [Installing Marlin (VSCode)](http://marlinfw.org/docs/basics/install_platformio_vscode.html).
 
-If you need more help, follow our [instruction_visualstudio-code](https://github.com/OfficeChromatography/OCLab3/blob/master/instruction_visualstudio-code), available above in the OCLab3 folder.
+If you need more help, follow our [instruction_visualstudio-code](https://github.com/OfficeChromatography/OCLab3/blob/master/instruction_visualstudio-code.pdf), available above in the OCLab3 folder.
 
 # OC-Manager 3 SOFTWARE
 OC-Manager 3 installation 
