@@ -9,10 +9,11 @@ Download earlier versions of Marlin on the [Releases page](https://github.com/Ma
 
 ## Building OC-Control
 
-To build OC-Control you'll need [Arduino IDE 1.8.8 or newer](https://www.arduino.cc/en/main/software) or [PlatformIO](http://docs.platformio.org/en/latest/ide.html#platformio-ide). Detailed build and install instructions are posted at:
+To build OC-Control [PlatformIO](http://docs.platformio.org/en/latest/ide.html#platformio-ide) is preferred. Detailed build and install instructions are posted at:
 
-  - [Installing Marlin (Arduino)](http://marlinfw.org/docs/basics/install_arduino.html)
   - [Installing Marlin (VSCode)](http://marlinfw.org/docs/basics/install_platformio_vscode.html).
+
+If you need more help, follow our [instruction_visualstudio-code](https://github.com/OfficeChromatography/OCLab3/blob/master/instruction_visualstudio-code), available above in the OCLab3 folder.
 
 # OC-Manager 3 SOFTWARE
 OC-Manager 3 installation 

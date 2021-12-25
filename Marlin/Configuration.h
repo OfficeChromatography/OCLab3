@@ -728,7 +728,8 @@
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
- * Z value 2133 for pitch=1.5 mm, 1600 for pitch=2 mm
+ * Z value 2133 for syringe pump spindle pitch=1.5 mm, 1600 for pitch=2 mm
+ * For other pitches consult https://blog.prusaprinters.org/calculator_3416/ (Steps per millimeter - leadscrew driven systems).
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 2133, 500 }
 
@@ -736,6 +737,7 @@
  * Default Max Feed Rate (mm/s)
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2...]]
+ * Set DEFAULT_MAX_FEEDRATE Z to 10 for a syringe pump spindle with 1.5 mm pitch and to 1 for a pitch of 2 mm.
  */
 #define DEFAULT_MAX_FEEDRATE          { 300, 300, 10, 25 }
 
