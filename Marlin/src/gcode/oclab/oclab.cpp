@@ -21,7 +21,7 @@
 #endif
 
 #define LED_PIN_PIXEL    6
-#define LED_COUNT 8
+#define LED_COUNT 16
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN_PIXEL, NEO_GRBW + NEO_KHZ800);
 extern ForceSensor force ;
 extern ValveOpen valve ;
