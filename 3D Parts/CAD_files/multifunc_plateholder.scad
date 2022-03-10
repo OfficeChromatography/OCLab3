@@ -20,7 +20,7 @@ module plate_holder() {   //glass strip+3 mm silicone mat
         //position burling for aluminum plate
         translate([-50, -1, -3]) cylinder(r=1.5, h=3, $fn=60);
         //stop plate
-        translate([-57, 48.5, -4]) cube([platte_x+13, 1, 5.4]);
+        //translate([-57, 48.5, -4]) cube([platte_x+13, 1, 5.4]);
         //pressure springs
         translate([-20, -54, 0.2]) cylinder(r=2.5, h=3.3, $fn=60);
         translate([20, -54, 0.2]) cylinder(r=2.5, h=3.3, $fn=60);
@@ -28,13 +28,12 @@ module plate_holder() {   //glass strip+3 mm silicone mat
         translate([platte_x/2-30.5, -56.5, -1.5]) cube([30.5, 2, 5]);
     }
     //lowering for glass+silicone mat: h=3,9 mm
-    translate([-57, 49.5, -2]) cube([platte_x+13, 9, 10]);
-    translate([-platte_x/2, 48.5, 1.4]) cube([platte_x, 2, 10]);
+    translate([-57, 48.5, -2]) cube([platte_x+13.2, 9.1, 10]);
     //cut to retain front or back part: select
         //front part
-    //translate([-65, -62, -5]) cube([130, 14.5, 10]);
+    translate([-65, -62, -5]) cube([130, 14.5, 10]);
         //back part
-    translate([-65, -47.5, -5]) cube([130, 110, 10]);
+    //translate([-65, -47.5, -5]) cube([130, 110, 10]);
 }
 }
 //HPTLC plate for testing
@@ -68,8 +67,8 @@ module main_body() {
     //positon holes: M4 screw
         distance=110;
         rand=(x-distance)/2;
-        translate([x/2-rand, 23, -5]) cylinder(r=3.75, h=5);
-        mirror([1,0,0]) translate([x/2-rand, 23, -5]) cylinder(r=3.75, h=5);
+        translate([x/2-rand, 23, -6]) cylinder(r=3.75, h=6);
+        mirror([1,0,0]) translate([x/2-rand, 23, -6]) cylinder(r=3.75, h=6);
         //heating mat contacts
         translate([23, -6, -2]) cube([55, 20, 5], center =true);
         //heating mat cables

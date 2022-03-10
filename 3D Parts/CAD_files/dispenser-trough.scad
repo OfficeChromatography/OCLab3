@@ -17,8 +17,8 @@ platte_y_50=51;
 $fn=80;
 
 module suspension_trough() {    
-    slit = 0.18; //0.18 resulted in a slit width of 0.1 mm
-    slit_L=90;
+    slit = 0.16; //0.16 resulted in a slit width of 0.1 mm
+    slit_L=96;
     D=5.4; // OD glass rod 5 mm, length 98 mm
      
     color( "Gray", 1.0 ) {
@@ -28,24 +28,23 @@ module suspension_trough() {
         hull() {
         translate([0, 0, 1.75]) cube([2, 2, 99]);
         translate ([12, 0, 1.75]) cube([2, 2, 99]);
-        translate ([7, 7, 1.75]) cylinder(r=3, h=99, $fn=100);
+        translate ([5.5, 8, 1.75]) cube([3, 2, 99]);
+        //translate ([7, 7, 1.75]) cylinder(r=3, h=99, $fn=100);
             }
         //buildup
-        translate([0, -8, 0]) cube([14, 8, 102.5]);
+        translate([0, -12, 0]) cube([14, 12, 102.5]);
         //hold
-        translate([13, -8, 31.25]) cube([10, 2, 40]);
-        translate([21, -8, 31.25]) cube([2, 4, 40]);
+        translate([13, -12, 31.25]) cube([10, 2, 40]);
+        translate([21, -12, 31.25]) cube([2, 4, 40]);
         }
     //cut-out
     hull() {
     translate([7, 0, 2.25]) cylinder(d=D, h=98);
-    translate([2, -8.5, 2.25]) cube([2, 2, 98]);
-    translate ([10, -8.5, 2.25]) cube([2, 2, 98]);
+    translate([2, -12.5, 2.25]) cube([2, 2, 98]);
+    translate ([10, -12.5, 2.25]) cube([2, 2, 98]);
         }
     //slit
     translate([7-slit/2, -10, (102.5-slit_L)/2]) cube([slit, 22, slit_L]); 
-    //flat cut
-    translate([-5, 9.5, -2]) cube([20, 2, 110]);
     //section cut for testing
     //translate([-3, -25, -4]) cube([20, 40, 37]);
     //label
@@ -55,15 +54,10 @@ module suspension_trough() {
     }
         }
  //bridges
- difference() {
-     union() {
-        translate([2, 2, 33]) cube([10, 2, 2]);
-        translate([2, 2, 66]) cube([10, 2, 2]);  
-     }
-        translate([7, 0, 2.25]) cylinder(d=D, h=98);
- }
- /*//glass rod for testing
- color( "LightCyan", 1.0 ) {
+    //translate([2.5, -1, 33]) cube([9, 3, 2]);
+    //translate([2.5, -1, 66]) cube([9, 3, 2]);
+ //glass rod for testing
+ /*color( "LightCyan", 1.0 ) {
      translate([7, 0, 2.25]) cylinder(d=5, h=98);
  }*/
  }
@@ -71,7 +65,7 @@ module suspension_trough() {
 module solution_trough() {
 color( "Gray", 1.0 ) {
     D1=5.2; // OD glass rod 5 mm, length 99 mm
-    D2=5.1; //cut-out
+    D2=5.3; //cut-out
     
     difference() {
     union() {
@@ -89,7 +83,7 @@ color( "Gray", 1.0 ) {
         }
     //cut-out
     hull() {
-    translate([7, 2.3, 4.25]) cylinder(d=D2, h=94); //change the translate y value to modify the slit above the glass rod (minimum=2.3), the diameter D2 also could be increased/decreased (D2=5.1 results in a very small slit above the glass rod)
+    translate([7, 2.3, 4.25]) cylinder(d=D2, h=94); //change the translate y value to modify the slit above the glass rod (minimum=2.3), the diameter D2 also could be increased/decreased (D2=5.1 results in a very small slit above the glass rod). With D1=5.2, the trough is well suited to apply bioluminescent bacteria.
     translate([2, -8.5, 3.25]) cube([2, 2, 96]);
     translate ([10, -8.5, 3.25]) cube([2, 2, 96]);
         }
@@ -109,7 +103,7 @@ translate([2.5, -1, 33]) cube([9, 3, 2]);
 translate([2.5, -1, 66]) cube([9, 3, 2]);
 //glass rod for testing
  /*color( "LightCyan", 1.0 ) {
-     translate([7, 7.4, 1.3]) cylinder(d=D2, h=100);
+     translate([7, 7.4, 1.3]) cylinder(d=5, h=100);
  }*/
  }
 
