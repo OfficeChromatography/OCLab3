@@ -65,7 +65,7 @@ module suspension_trough() {
 module solution_trough() {
 color( "Gray", 1.0 ) {
     D1=5.2; // OD glass rod 5 mm, length 99 mm
-    D2=5.3; //cut-out
+    D2=5.4; //cut-out
     
     difference() {
     union() {
@@ -87,14 +87,14 @@ color( "Gray", 1.0 ) {
     translate([2, -8.5, 3.25]) cube([2, 2, 96]);
     translate ([10, -8.5, 3.25]) cube([2, 2, 96]);
         }
-    translate([7, 7.4, -1]) cylinder(d=D1, h=104);
+    translate([7, 7.4, -2]) cylinder(d=D1, h=108);
     //flat cut
     translate([-5, 9.3, -2]) cube([20, 2, 110]);
     //section cut for testing
     //translate([-3, -25, -4]) cube([30, 40, 70]);
     //label
-    string = str("D1= ", D1, ", D2= ", D2, "mm");
-    translate ([12, -5, 60]) rotate([0, 90, 0])
+    string = str("D1= ", D1, ", D2= ", D2, "mm, vibrio");
+    translate ([12, -5, 80]) rotate([0, 90, 0])
     linear_extrude(2) text(string, size = 4, direction = "ltr", spacing = 1 );
  }
  }
