@@ -731,7 +731,7 @@
  * Z value 2133 for syringe pump spindle pitch=1.5 mm, 1600 for pitch=2 mm
  * For other pitches consult https://blog.prusaprinters.org/calculator_3416/ (Steps per millimeter - leadscrew driven systems).
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 2133, 500 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 1600, 500 }
 
 /**
  * Default Max Feed Rate (mm/s)
