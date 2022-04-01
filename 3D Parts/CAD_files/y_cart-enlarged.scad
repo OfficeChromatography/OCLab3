@@ -2,9 +2,9 @@
 //an import of cart_new-DevCart.stl is needed; thus it must be in the same folder
 $fn=80;
 
-plate_holder();
+y_cart_enlarged();
 
-module plate_holder() {
+module y_cart_enlarged() {
 difference() {
     union() {
     translate([-0.5, -190, -50])
@@ -27,5 +27,7 @@ difference() {
     //cutout for M4 screw fitting to the positioning holes of the plate holder
     translate([0, 5, 0]) cylinder(r=1.95, h=10);
     translate([0, 115, 0]) cylinder(r=1.95, h=10);
+    //cutout pulley
+    translate([-69, 52, -1]) cube([13, 16, 5]);
 }
 }
