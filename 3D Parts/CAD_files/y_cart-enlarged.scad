@@ -28,6 +28,6 @@ difference() {
     translate([0, 5, 0]) cylinder(r=1.95, h=10);
     translate([0, 115, 0]) cylinder(r=1.95, h=10);
     //cutout pulley
-    translate([-69, 52, -1]) cube([13, 16, 5]);
+    #translate([-69, 50, -1]) cube([20, 20, 5]);
 }
 }
