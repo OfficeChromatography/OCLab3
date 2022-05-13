@@ -25,9 +25,9 @@ difference() {
     translate([-3, 0, 7.5]) cube([6, 10, 5]);
     translate([-3, 111, 7.5]) cube([6, 10, 5]);
     //cutout for M4 screw fitting to the positioning holes of the plate holder
-    translate([0, 5, 0]) cylinder(r=1.95, h=10);
-    translate([0, 115, 0]) cylinder(r=1.95, h=10);
+    #translate([0, 4.5, 0]) cylinder(r=1.95, h=10);
+    translate([0, 115.5, 0]) cylinder(r=1.95, h=10);
     //cutout pulley
-    #translate([-69, 50, -1]) cube([20, 20, 5]);
+    translate([-69, 50, -1]) cube([20, 20, 5]);
 }
 }

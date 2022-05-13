@@ -1,7 +1,7 @@
 //multi-functional plate holder
 $fn=80;
-//plate_holder(); //glass strip plus 3 mm silicone mat
-translate([0, -2, 7.5]) cover_development();  //plate cover during development
+plate_holder(); //glass strip plus 3 mm silicone mat
+//translate([0, -2, 7.5]) cover_development();  //plate cover during development
 
 x=128;
 y=124;
@@ -28,9 +28,9 @@ module plate_holder() {   //glass strip+3 mm silicone mat
     translate([-57, 48.5, -2]) cube([platte_x+13.5, 9.2, 10]);
     //cut to retain front or back part: select
         //front part
-    //translate([-65, -62, -5]) cube([130, 14.5, 10]);
+    translate([-65, -62, -5]) cube([130, 14.5, 10]);
         //back part
-    translate([-65, -47.5, -5]) cube([130, 110, 10]);
+    //translate([-65, -47.5, -5]) cube([130, 110, 10]);
 }
 }
 //HPTLC plate for testing
@@ -50,6 +50,9 @@ module main_body() {
         cube([x, y, h], center=true);
         //cutout plate
         translate([0, -2, 2]) cube([platte_x, platte_y, h-2], center=true);
+        //cutout slit
+        translate([-51.5, -50, -2]) cube([1, 10, 10]);
+        translate([50.5, -50, -2]) cube([1, 10, 10]);        
         //pressure springs cutout
         translate([-platte_x/2, -(platte_y/2+8), -2]) cube([platte_x, 10, 10]);
         //lowering heating mats
@@ -67,7 +70,7 @@ module main_body() {
         translate([-55, 23+15-7, -7]) cylinder(r=2, h=4);
         translate([-55, 23-16-7, -7]) cylinder(r=2, h=4);
     //positon holes: M4 screw
-        distance=110;
+        distance=110.5;  //111.0 for annealed PC-Carbon filament
         rand=(x-distance)/2;
         translate([x/2-rand, 16, -6]) cylinder(r=3.75, h=6);
         mirror([1,0,0]) translate([x/2-rand, 16, -6]) cylinder(r=3.75, h=6);
