@@ -1,7 +1,9 @@
 //multi-functional plate holder
 $fn=80;
+
 plate_holder(); //glass strip plus 3 mm silicone mat
 //translate([0, -2, 7.5]) cover_development();  //plate cover during development
+//cutting_aid();  //for silicone mat
 
 x=128;
 y=124;
@@ -115,5 +117,20 @@ module cover_development() {
     //translate([0, 4, 3.5]) cube([platte_x, platte_y-7, 1], center=true);
 //glass strip for testing
     //translate([-55, -44.5, -6]) cube([110, 1.6, 12]);    
+}
+}
+
+module cutting_aid() {   //silicone mat
+k=0.8; //knife thickness
+HF=9; //mat height
+LF = 114; //mat length
+DF = 2.9; //mat thickness
+difference() {
+cube([150, 60, 10]);
+translate([20, 0, 10-DF]) cube([LF, 28, 10]); 
+translate([10, 28-HF-k, 0]) cube([135, k, 10]); 
+string = str(LF, " x ", HF, " x ", DF, " mm");
+   # translate ([12, 35, 7])
+   # linear_extrude(4) text(string, size = 6, direction = "ltr", spacing = 1 );     
 }
 }
