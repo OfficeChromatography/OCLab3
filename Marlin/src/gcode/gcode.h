@@ -502,9 +502,12 @@ private:
   static void G96();
   static void G97();
   static void G98();
+  static void G99();
   static void G40();
   static void G41();
   static void G42();
+  static void G50();
+  static void G51();
 
 
 

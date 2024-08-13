@@ -188,7 +188,7 @@ void ForceSensor::getZero(void) {
         SERIAL_ECHOLN();
         minkill(true);
     }else{
-        homeaxis(Z_AXIS);
+        homeaxis(X_AXIS);
         _zero_offset = testingMeasure();
         SERIAL_ECHOLN("NEW ZERO SETTLED");
     }

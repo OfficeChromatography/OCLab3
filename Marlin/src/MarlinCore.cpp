@@ -191,12 +191,15 @@
 
 ForceSensor force = ForceSensor();
 
-// Air Sensor
-#define DHTPIN 40
+// Air Sensor (2LabsToGo)
+#define DHTPIN 42
 #define DHTTYPE DHT22 
 DHT dht(DHTPIN, DHTTYPE);
 
-
+//Air Sensor 2 (mini-incubator)
+#define DHT2PIN 22
+#define DHT2TYPE DHT22 
+DHT dht2(DHT2PIN, DHT2TYPE);
 
 const char NUL_STR[] PROGMEM = "",
            M112_KILL_STR[] PROGMEM = "M112 Shutdown",
@@ -1208,6 +1211,7 @@ void setup() {
   // Force Sensor initial
   force.begin();
   dht.begin();
+  dht2.begin();
   //endstops.enable(true);
   //homeaxis(Z_AXIS);
 

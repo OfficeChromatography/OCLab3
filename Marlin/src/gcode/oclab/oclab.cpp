@@ -20,12 +20,13 @@
   clock_prescale_set(clock_div_1);
 #endif
 
-#define LED_PIN_PIXEL    6
+#define LED_PIN_PIXEL 54
 #define LED_COUNT 16
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN_PIXEL, NEO_GRBW + NEO_KHZ800);
 extern ForceSensor force ;
 extern ValveOpen valve ;
 extern DHT dht;
+extern DHT dht2;
 
 
 // UTIL FUNCTIONS
@@ -50,22 +51,23 @@ void colorWipe(uint32_t color) {
 
 // -------------------------- GCode Functions ---------------------//
 
-// Control the RGB LEDs
+// Control the RGBW LEDs
 void GcodeSuite::G93(){
-  if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')){
+  if (parser.seen('R')&&parser.seen('G')&&parser.seen('B')&&parser.seen('W')){
     int red = parser.intval('R'); 
     int green = parser.intval('G'); 
     int blue = parser.intval('B'); 
-    // int brigthness = parser.intval('I'); 
+    int white = parser.intval('W');
+    //int brigthness = parser.intval('I'); 
 
     strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
     strip.show();            // Turn OFF all pixels ASAP
-    // strip.setBrightness(brigthness); // Set BRIGHTNESS to about 1/5 (max = 255)
-    colorWipe(strip.Color(red, green, blue));
+    //strip.setBrightness(brigthness); // Set BRIGHTNESS to about 1/5 (max = 255)
+    colorWipe(strip.Color(red, green, blue, white));
   }
   else
   {
-    SERIAL_ECHOLN("Please send an RGB and brigthness value");
+    SERIAL_ECHOLN("Please send an RGBW value");
   }
 }
 
@@ -92,7 +94,7 @@ void GcodeSuite::G95(){
   }
 }
 
-// Not implemented
+// DHT Sensors
 void GcodeSuite::G96(){
   float temperature = 0;
   float humidity = 0;
@@ -102,6 +104,17 @@ void GcodeSuite::G96(){
   
   SERIAL_ECHOPAIR("T:", temperature);
   SERIAL_ECHOLNPAIR(" H:", humidity);
+}
+
+void GcodeSuite::G99(){
+  float temperature2 = 0;
+  float humidity2 = 0;
+  
+  humidity2 = dht2.readHumidity(true);
+  temperature2 = dht2.readTemperature(false);
+  
+  SERIAL_ECHOPAIR("T2:", temperature2);
+  SERIAL_ECHOLNPAIR("H2:", humidity2);
 }
 
 // Set the pressure 
@@ -147,6 +160,23 @@ void GcodeSuite::G41(){
   valve.openValve();
 }
 
+// Start the Pump - Autosampler
+void GcodeSuite::G50(){
+  planner.synchronize();
+  pin_t pin = 40;
+  pinMode(pin, OUTPUT);
+  extDigitalWrite(pin, 255);
+  analogWrite(pin, 255);
 
+}
 
+// Stop the Pump - Autosampler
+void GcodeSuite::G51(){
+  planner.synchronize();
+  pin_t pin = 40;
+  pinMode(pin, OUTPUT);
+  extDigitalWrite(pin, 0);
+  analogWrite(pin, 0);
+  
+}
 

@@ -85,7 +85,7 @@ Joystick joystick;
   }
 #endif
 
-static float Joystick::show_raw(){
+//static float Joystick::show_raw(){
   // if(x.raw <10250){
   //   return 0;
   // }
@@ -96,12 +96,12 @@ static float Joystick::show_raw(){
   // return 4.38857589e-03*x.raw - 2.97681744e+01;
   // return 2.47009819e-02*x.raw - 2.78255860e+02;
   // return 1.69288934e-02*x.raw -1.91998681e+02;
-  int16_t p = x.raw;
+  //int16_t p = x.raw;   
   // return 0.04929592590378106*p-595.9564215244906;
-  return 0.037138965180623845*p-443.1090776401401;
+  //return 0.037138965180623845*p-443.1090776401401;
       // }
   // float a = 1.23350860e-02 * x.raw -1.25021319e+02;
-}
+//}
 
 #if HAS_JOY_ADC_X || HAS_JOY_ADC_Y || HAS_JOY_ADC_Z
 

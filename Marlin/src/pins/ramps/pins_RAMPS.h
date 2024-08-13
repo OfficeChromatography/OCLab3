@@ -86,26 +86,26 @@
 //
 #ifndef X_STOP_PIN
   #ifndef X_MIN_PIN
-    #define X_MIN_PIN                          3
+    #define X_MIN_PIN                         46
   #endif
   #ifndef X_MAX_PIN
-    #define X_MAX_PIN                          2
+    #define X_MAX_PIN                         47
   #endif
 #endif
 #ifndef Y_STOP_PIN
   #ifndef Y_MIN_PIN
-    #define Y_MIN_PIN                         14
+    #define Y_MIN_PIN                         44
   #endif
   #ifndef Y_MAX_PIN
-    #define Y_MAX_PIN                         15
+    #define Y_MAX_PIN                         45
   #endif
 #endif
 #ifndef Z_STOP_PIN
   #ifndef Z_MIN_PIN
-    #define Z_MIN_PIN                         18
+    #define Z_MIN_PIN                         43
   #endif
   #ifndef Z_MAX_PIN
-    #define Z_MAX_PIN                         19
+    #define Z_MAX_PIN                         48
   #endif
 #endif
 
@@ -119,32 +119,32 @@
 //
 // Steppers
 //
-#define X_STEP_PIN                            54
-#define X_DIR_PIN                             55
-#define X_ENABLE_PIN                          38
+#define X_STEP_PIN                            84
+#define X_DIR_PIN                             6
+#define X_ENABLE_PIN                          16
 #ifndef X_CS_PIN
   #define X_CS_PIN                            53
 #endif
 
-#define Y_STEP_PIN                            60
-#define Y_DIR_PIN                             61
-#define Y_ENABLE_PIN                          56
+#define Y_STEP_PIN                            80
+#define Y_DIR_PIN                             17
+#define Y_ENABLE_PIN                          79
 #ifndef Y_CS_PIN
   #define Y_CS_PIN                            49
 #endif
 
 #ifndef Z_STEP_PIN
-  #define Z_STEP_PIN                          46
+  #define Z_STEP_PIN                          11
 #endif
-#define Z_DIR_PIN                             48
-#define Z_ENABLE_PIN                          62
+#define Z_DIR_PIN                             12
+#define Z_ENABLE_PIN                          10
 #ifndef Z_CS_PIN
   #define Z_CS_PIN                            40
 #endif
 
-#define E0_STEP_PIN                           26
-#define E0_DIR_PIN                            28
-#define E0_ENABLE_PIN                         24
+#define E0_STEP_PIN                           8
+#define E0_DIR_PIN                            53
+#define E0_ENABLE_PIN                         7
 #ifndef E0_CS_PIN
   #define E0_CS_PIN                           42
 #endif
@@ -160,13 +160,13 @@
 // Temperature Sensors
 
 #ifndef TEMP_0_PIN
-  #define TEMP_0_PIN                          13  // Analog Input
+  #define TEMP_0_PIN                          67  // Analog Input
 #endif
 #ifndef TEMP_1_PIN
   #define TEMP_1_PIN                          15  // Analog Input
 #endif
 #ifndef TEMP_BED_PIN
-  #define TEMP_BED_PIN                        14  // Analog Input
+  #define TEMP_BED_PIN                        68  // Analog Input
 #endif
 
 // SPI for Max6675 or Max31855 Thermocouple
@@ -200,16 +200,16 @@
   #define MOSFET_D_PIN                        -1
 #endif
 #ifndef RAMPS_D8_PIN
-  #define RAMPS_D8_PIN                         8
+  #define RAMPS_D8_PIN                        23  //Heater plateholder
 #endif
 #ifndef RAMPS_D9_PIN
-  #define RAMPS_D9_PIN                         9
+  #define RAMPS_D9_PIN                         9  //External heater or fan
 #endif
 #ifndef RAMPS_D10_PIN
-  #define RAMPS_D10_PIN                       10
+  #define RAMPS_D10_PIN                       24  //Mini-Incubator
 #endif
 
-#define HEATER_0_PIN               RAMPS_D10_PIN
+#define HEATER_0_PIN               RAMPS_D10_PIN   //Mini-Incubator
 
 #if ENABLED(IS_RAMPS_EFB)                         // Hotend, Fan, Bed
   #define HEATER_BED_PIN            RAMPS_D8_PIN
@@ -231,7 +231,7 @@
 
 #ifndef FAN_PIN
   #if EITHER(IS_RAMPS_EFB, IS_RAMPS_EFF)          // Hotend, Fan, Bed or Hotend, Fan, Fan
-    #define FAN_PIN                           10
+    #define FAN_PIN                           9
   #elif EITHER(IS_RAMPS_EEF, IS_RAMPS_SF)         // Hotend, Hotend, Fan or Spindle, Fan
     #define FAN_PIN                 RAMPS_D8_PIN
   #elif ENABLED(IS_RAMPS_EEB)                     // Hotend, Hotend, Bed
@@ -262,7 +262,7 @@
 
 #if ENABLED(CASE_LIGHT_ENABLE) && !defined(CASE_LIGHT_PIN) && !defined(SPINDLE_LASER_ENA_PIN)
   #if NUM_SERVOS <= 1                             // Prefer the servo connector
-    #define CASE_LIGHT_PIN                     6  // Hardware PWM
+    #define CASE_LIGHT_PIN                    41  // Hardware PWM
   #elif HAS_FREE_AUX2_PINS
     #define CASE_LIGHT_PIN                    44  // Hardware PWM
   #endif

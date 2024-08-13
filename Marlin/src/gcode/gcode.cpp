@@ -350,9 +350,11 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 96: G96(); break;                                      // G96: Returns the air temperature and humidity
       case 97: G97(); break;                                      // G97: Set the pressure
       case 98: G98(); break;                                      // G98: Open the valve at certain frequency
+      case 99: G99(); break;                                      // G99: Returns the air temperature and humidity (mini-incubator)
       case 40: G40(); break;                                      // G40: Close the valve
       case 41: G41(); break;                                      // G41: Open the valve
-      
+      case 50: G50(); break;                                      // G50: Start the pump - autosampler
+      case 51: G51(); break;                                      // G51: Stop the pump - autosampler
 
       #if HAS_MESH
         case 42: G42(); break;                                    // G42: Coordinated move to a mesh point

@@ -10,7 +10,7 @@
 
 ValveOpen::ValveOpen(){
     maxFrequency = 1400;
-    pin = 16;
+    pin = 37;
     open = false;
     closingTime = 0;
     MaxOpenPeriod = 30000; // in ms
@@ -29,16 +29,16 @@ void ValveOpen::openValve(){
     extDigitalWrite(pin, 1);
     analogWrite(pin, 255);
     setClosingTime(millis());
-    extDigitalWrite(17, 1);
-    analogWrite(17, 255);
+    //extDigitalWrite(17, 1);
+    //analogWrite(17, 255);
 }
 
 void ValveOpen::closeValve(){
     open = false;
     extDigitalWrite(pin, 0);
     analogWrite(pin, 0);
-    extDigitalWrite(17, 0);
-    analogWrite(17, 0);
+    //extDigitalWrite(17, 0);
+    //analogWrite(17, 0);
 }
 
 bool ValveOpen::isOpen(){

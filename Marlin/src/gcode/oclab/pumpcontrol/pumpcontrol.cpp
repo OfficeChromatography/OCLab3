@@ -12,15 +12,47 @@ int PumpControl::errorFunction(float set, float real){
   return (error)<1?(1):(error);
 }
     
-void PumpControl::calculateNewPosition(){
-  if(pressure_read< min_pressure){
-    int error = errorFunction(min_pressure, pressure_read);
-    pos+=(GAIN*error);
-  }
-  if(pressure_read > max_pressure){
-    int error = errorFunction(max_pressure, pressure_read);
-    pos-=(GAIN*error);
-  }
+void PumpControl::calculateNewPosition()
+{
+	if (pressure_set <= 10)
+	{
+		if(pressure_read< min_pressure)
+		{
+			int error = errorFunction(min_pressure, pressure_read);
+			pos+=(0.001*error);
+		}
+		if(pressure_read > max_pressure)
+		{
+			int error = errorFunction(max_pressure, pressure_read);
+			pos-=(0.001*error);
+		}
+	}
+	if (pressure_set >10 and pressure_set <= 24)
+	{
+		if(pressure_read< min_pressure)
+		{
+			int error = errorFunction(min_pressure, pressure_read);
+			pos+=(0.005*error);
+		}
+		if(pressure_read > max_pressure)
+		{
+			int error = errorFunction(max_pressure, pressure_read);
+			pos-=(0.005*error);
+		}
+	}
+	else // > 24 psi
+	{
+		if(pressure_read< min_pressure)
+		{
+			int error = errorFunction(min_pressure, pressure_read);
+			pos+=(0.01*error);
+		}
+		if(pressure_read > max_pressure)
+		{
+			int error = errorFunction(max_pressure, pressure_read);
+			pos-=(0.01*error);
+		}
+	}
 }
 
 void PumpControl::move(){
@@ -37,10 +69,17 @@ PumpControl::PumpControl(float pressure_set){
 
   if(!is_out_of_range()){
     this->pressure_set = pressure_set;
-    if(pressure_set<LIMIT_PRESSURE_CHANGE_CALCULATION){
-      min_pressure = pressure_set-1;
-      max_pressure = pressure_set+1;
-    }else{
+    if(pressure_set<=10)  //<=LIMIT_PRESSURE_CHANGE_CALCULATION)
+    {
+      min_pressure = pressure_set*0.975;      //-1;
+      max_pressure = pressure_set*1.025;     //+1;
+    }
+    if(pressure_set>10 and pressure_set <=24)  //>LIMIT_PRESSURE_CHANGE_CALCULATION)
+    {
+      min_pressure = pressure_set*0.9625;
+      max_pressure = pressure_set*1.0375; 
+    }
+    else{
       min_pressure = pressure_set*0.95;
       max_pressure = pressure_set*1.05;
     }
